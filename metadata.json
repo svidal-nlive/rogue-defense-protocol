@@ -1,0 +1,5 @@
+{
+  "name": "Rogue Defense Protocol",
+  "description": "A cyberpunk hybrid roguelike tower defense simulation where you upgrade a guardian construct to defend against rogue AI geometric entities.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,2098 @@
+{
+  "generated": "2026-01-14T17:21:40.650956",
+  "project_root": "/home/msn0624c/docker/apps/stacks/rogue-defense-protocol",
+  "files": [
+    {
+      "file": "server.js",
+      "items": [
+        {
+          "name": "next",
+          "type": "method",
+          "label": "method",
+          "line": 21,
+          "file": "server.js"
+        }
+      ]
+    },
+    {
+      "file": "types.ts",
+      "items": [
+        {
+          "name": "WeaponDefinition",
+          "type": "interface",
+          "label": "interface",
+          "line": 27,
+          "file": "types.ts"
+        },
+        {
+          "name": "Enemy",
+          "type": "interface",
+          "label": "interface",
+          "line": 104,
+          "file": "types.ts"
+        },
+        {
+          "name": "Projectile",
+          "type": "interface",
+          "label": "interface",
+          "line": 124,
+          "file": "types.ts"
+        },
+        {
+          "name": "PlayerStats",
+          "type": "interface",
+          "label": "interface",
+          "line": 146,
+          "file": "types.ts"
+        },
+        {
+          "name": "Skill",
+          "type": "interface",
+          "label": "interface",
+          "line": 159,
+          "file": "types.ts"
+        },
+        {
+          "name": "SkillCategory",
+          "type": "type",
+          "label": "type",
+          "line": 171,
+          "file": "types.ts"
+        },
+        {
+          "name": "SkillNode",
+          "type": "interface",
+          "label": "interface",
+          "line": 173,
+          "file": "types.ts"
+        },
+        {
+          "name": "ChipType",
+          "type": "type",
+          "label": "type",
+          "line": 191,
+          "file": "types.ts"
+        },
+        {
+          "name": "ChipRarity",
+          "type": "type",
+          "label": "type",
+          "line": 192,
+          "file": "types.ts"
+        },
+        {
+          "name": "ChipBonus",
+          "type": "interface",
+          "label": "interface",
+          "line": 194,
+          "file": "types.ts"
+        },
+        {
+          "name": "Chip",
+          "type": "interface",
+          "label": "interface",
+          "line": 207,
+          "file": "types.ts"
+        },
+        {
+          "name": "OwnedChip",
+          "type": "interface",
+          "label": "interface",
+          "line": 224,
+          "file": "types.ts"
+        },
+        {
+          "name": "ChipState",
+          "type": "interface",
+          "label": "interface",
+          "line": 232,
+          "file": "types.ts"
+        },
+        {
+          "name": "BattleRewards",
+          "type": "interface",
+          "label": "interface",
+          "line": 242,
+          "file": "types.ts"
+        },
+        {
+          "name": "BattleState",
+          "type": "interface",
+          "label": "interface",
+          "line": 252,
+          "file": "types.ts"
+        },
+        {
+          "name": "GameState",
+          "type": "interface",
+          "label": "interface",
+          "line": 263,
+          "file": "types.ts"
+        },
+        {
+          "name": "GameAction",
+          "type": "type",
+          "label": "type",
+          "line": 296,
+          "file": "types.ts"
+        },
+        {
+          "name": "ShopCategory",
+          "type": "type",
+          "label": "type",
+          "line": 331,
+          "file": "types.ts"
+        },
+        {
+          "name": "CurrencyType",
+          "type": "type",
+          "label": "type",
+          "line": 332,
+          "file": "types.ts"
+        },
+        {
+          "name": "ShopItem",
+          "type": "interface",
+          "label": "interface",
+          "line": 334,
+          "file": "types.ts"
+        },
+        {
+          "name": "WeaponSkin",
+          "type": "interface",
+          "label": "interface",
+          "line": 345,
+          "file": "types.ts"
+        },
+        {
+          "name": "BaseSkin",
+          "type": "interface",
+          "label": "interface",
+          "line": 355,
+          "file": "types.ts"
+        },
+        {
+          "name": "BoostItem",
+          "type": "interface",
+          "label": "interface",
+          "line": 365,
+          "file": "types.ts"
+        },
+        {
+          "name": "BoostEffect",
+          "type": "type",
+          "label": "type",
+          "line": 373,
+          "file": "types.ts"
+        },
+        {
+          "name": "ActiveBoost",
+          "type": "interface",
+          "label": "interface",
+          "line": 384,
+          "file": "types.ts"
+        },
+        {
+          "name": "ShopState",
+          "type": "interface",
+          "label": "interface",
+          "line": 391,
+          "file": "types.ts"
+        }
+      ]
+    },
+    {
+      "file": "App.tsx",
+      "items": [
+        {
+          "name": "navigateTo",
+          "type": "function",
+          "label": "const function",
+          "line": 18,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setCurrentScreen",
+          "type": "method",
+          "label": "method",
+          "line": 19,
+          "file": "App.tsx"
+        },
+        {
+          "name": "handleBattleExit",
+          "type": "function",
+          "label": "const function",
+          "line": 22,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setShowBattleSummary",
+          "type": "method",
+          "label": "method",
+          "line": 24,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setCurrentScreen",
+          "type": "method",
+          "label": "method",
+          "line": 26,
+          "file": "App.tsx"
+        },
+        {
+          "name": "handleSummaryClose",
+          "type": "function",
+          "label": "const function",
+          "line": 30,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setShowBattleSummary",
+          "type": "method",
+          "label": "method",
+          "line": 31,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setCurrentScreen",
+          "type": "method",
+          "label": "method",
+          "line": 32,
+          "file": "App.tsx"
+        },
+        {
+          "name": "handleSummaryRetry",
+          "type": "function",
+          "label": "const function",
+          "line": 35,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setShowBattleSummary",
+          "type": "method",
+          "label": "method",
+          "line": 36,
+          "file": "App.tsx"
+        },
+        {
+          "name": "setCurrentScreen",
+          "type": "method",
+          "label": "method",
+          "line": 37,
+          "file": "App.tsx"
+        },
+        {
+          "name": "renderScreen",
+          "type": "function",
+          "label": "const function",
+          "line": 40,
+          "file": "App.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 57,
+          "file": "App.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 90,
+          "file": "App.tsx"
+        }
+      ]
+    },
+    {
+      "file": "contexts/GameContext.tsx",
+      "items": [
+        {
+          "name": "gameReducer",
+          "type": "function",
+          "label": "const function",
+          "line": 19,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "GameContextType",
+          "type": "interface",
+          "label": "interface",
+          "line": 612,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "GameProviderProps",
+          "type": "interface",
+          "label": "interface",
+          "line": 634,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 646,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "saveGameState",
+          "type": "method",
+          "label": "method",
+          "line": 648,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 651,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 656,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 660,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 664,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 668,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 672,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 683,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 693,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 699,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 704,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 722,
+          "file": "contexts/GameContext.tsx"
+        },
+        {
+          "name": "useGame",
+          "type": "function",
+          "label": "const function",
+          "line": 733,
+          "file": "contexts/GameContext.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Screens/HomeScreen.tsx",
+      "items": [
+        {
+          "name": "HomeScreenProps",
+          "type": "interface",
+          "label": "interface",
+          "line": 5,
+          "file": "components/Screens/HomeScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 10,
+          "file": "components/Screens/HomeScreen.tsx"
+        },
+        {
+          "name": "IntelItem",
+          "type": "function",
+          "label": "const function",
+          "line": 134,
+          "file": "components/Screens/HomeScreen.tsx"
+        },
+        {
+          "name": "StatBrief",
+          "type": "function",
+          "label": "const function",
+          "line": 141,
+          "file": "components/Screens/HomeScreen.tsx"
+        },
+        {
+          "name": "OperationCard",
+          "type": "function",
+          "label": "const function",
+          "line": 148,
+          "file": "components/Screens/HomeScreen.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Screens/GuardianScreen.tsx",
+      "items": [
+        {
+          "name": "handleEquipChip",
+          "type": "function",
+          "label": "const function",
+          "line": 73,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 74,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "handleUnequipChip",
+          "type": "function",
+          "label": "const function",
+          "line": 77,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 78,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "handleUpgradeChip",
+          "type": "function",
+          "label": "const function",
+          "line": 81,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 82,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "getChipInSlot",
+          "type": "function",
+          "label": "const function",
+          "line": 86,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 92,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 201,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 206,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 208,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 252,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 257,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 259,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 335,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 379,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 437,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 468,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 478,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "Upgrade",
+          "type": "method",
+          "label": "method",
+          "line": 500,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "StatCard",
+          "type": "function",
+          "label": "const function",
+          "line": 522,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "BonusTag",
+          "type": "function",
+          "label": "const function",
+          "line": 532,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 543,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "ChipIcon",
+          "type": "function",
+          "label": "const function",
+          "line": 550,
+          "file": "components/Screens/GuardianScreen.tsx"
+        },
+        {
+          "name": "WeaponIcon",
+          "type": "function",
+          "label": "const function",
+          "line": 560,
+          "file": "components/Screens/GuardianScreen.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Screens/ShopScreen.tsx",
+      "items": [
+        {
+          "name": "getOwnedBoostCount",
+          "type": "function",
+          "label": "const function",
+          "line": 18,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "isOwned",
+          "type": "function",
+          "label": "const function",
+          "line": 23,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "isEquippedWeapon",
+          "type": "function",
+          "label": "const function",
+          "line": 24,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "isEquippedBase",
+          "type": "function",
+          "label": "const function",
+          "line": 25,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "canAfford",
+          "type": "function",
+          "label": "const function",
+          "line": 27,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "handlePurchase",
+          "type": "function",
+          "label": "const function",
+          "line": 32,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 36,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 39,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "setPurchaseAnimation",
+          "type": "method",
+          "label": "method",
+          "line": 42,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "setTimeout",
+          "type": "method",
+          "label": "method",
+          "line": 43,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "handleEquip",
+          "type": "function",
+          "label": "const function",
+          "line": 47,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 51,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 53,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "handleActivateBoost",
+          "type": "function",
+          "label": "const function",
+          "line": 58,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "dispatch",
+          "type": "method",
+          "label": "method",
+          "line": 61,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "isBoostActive",
+          "type": "function",
+          "label": "const function",
+          "line": 64,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "renderItemCard",
+          "type": "function",
+          "label": "const function",
+          "line": 86,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 100,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "renderDetailPanel",
+          "type": "function",
+          "label": "const function",
+          "line": 196,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 211,
+          "file": "components/Screens/ShopScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 420,
+          "file": "components/Screens/ShopScreen.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Screens/SkillScreen.tsx",
+      "items": [
+        {
+          "name": "getIcon",
+          "type": "function",
+          "label": "const function",
+          "line": 17,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "getPosition",
+          "type": "function",
+          "label": "const function",
+          "line": 41,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "left",
+          "type": "function",
+          "label": "const function",
+          "line": 44,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 50,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 90,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 110,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 190,
+          "file": "components/Screens/SkillScreen.tsx"
+        },
+        {
+          "name": "upgradeSkill",
+          "type": "method",
+          "label": "method",
+          "line": 215,
+          "file": "components/Screens/SkillScreen.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Screens/BattleScreen.tsx",
+      "items": [
+        {
+          "name": "BattleScreenProps",
+          "type": "interface",
+          "label": "interface",
+          "line": 17,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "Ability",
+          "type": "interface",
+          "label": "interface",
+          "line": 22,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 144,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "startBattle",
+          "type": "method",
+          "label": "method",
+          "line": 146,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setBattleStarted",
+          "type": "method",
+          "label": "method",
+          "line": 147,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 152,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 157,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 162,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "advanceWave",
+          "type": "method",
+          "label": "method",
+          "line": 164,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 171,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setAbilities",
+          "type": "method",
+          "label": "method",
+          "line": 176,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 191,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setScreenShake",
+          "type": "method",
+          "label": "method",
+          "line": 250,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setTimeout",
+          "type": "method",
+          "label": "method",
+          "line": 251,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "triggerScreenShake",
+          "type": "method",
+          "label": "method",
+          "line": 265,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setAbilities",
+          "type": "method",
+          "label": "method",
+          "line": 273,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 291,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createDamageNumber",
+          "type": "method",
+          "label": "method",
+          "line": 292,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 324,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "handleKeyDown",
+          "type": "function",
+          "label": "const function",
+          "line": 325,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "activateAbility",
+          "type": "method",
+          "label": "method",
+          "line": 330,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "activateAbility",
+          "type": "method",
+          "label": "method",
+          "line": 333,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "activateAbility",
+          "type": "method",
+          "label": "method",
+          "line": 336,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 342,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 346,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setHp",
+          "type": "method",
+          "label": "method",
+          "line": 363,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setGameOver",
+          "type": "method",
+          "label": "method",
+          "line": 364,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "loop",
+          "type": "function",
+          "label": "const function",
+          "line": 368,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "spawnEnemy",
+          "type": "method",
+          "label": "method",
+          "line": 397,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "attackSpeedMultiplier",
+          "type": "function",
+          "label": "const function",
+          "line": 404,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "dx",
+          "type": "function",
+          "label": "const function",
+          "line": 423,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "dy",
+          "type": "function",
+          "label": "const function",
+          "line": 424,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setHp",
+          "type": "method",
+          "label": "method",
+          "line": 496,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 498,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createDamageNumber",
+          "type": "method",
+          "label": "method",
+          "line": 558,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 559,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 566,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createDamageNumber",
+          "type": "method",
+          "label": "method",
+          "line": 592,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 593,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 596,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "killEnemy",
+          "type": "method",
+          "label": "method",
+          "line": 597,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "createExplosion",
+          "type": "method",
+          "label": "method",
+          "line": 616,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "killEnemy",
+          "type": "method",
+          "label": "method",
+          "line": 617,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setGameOver",
+          "type": "method",
+          "label": "method",
+          "line": 659,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setTimeout",
+          "type": "method",
+          "label": "method",
+          "line": 661,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "onExit",
+          "type": "method",
+          "label": "method",
+          "line": 662,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "parallaxOffset",
+          "type": "function",
+          "label": "const function",
+          "line": 724,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "x",
+          "type": "function",
+          "label": "const function",
+          "line": 725,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "a",
+          "type": "function",
+          "label": "const function",
+          "line": 808,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "midR",
+          "type": "function",
+          "label": "const function",
+          "line": 834,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "jitter",
+          "type": "function",
+          "label": "const function",
+          "line": 835,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "fireAngle",
+          "type": "function",
+          "label": "const function",
+          "line": 848,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "iceAngle",
+          "type": "function",
+          "label": "const function",
+          "line": 862,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "voidAngle",
+          "type": "function",
+          "label": "const function",
+          "line": 876,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "hue",
+          "type": "function",
+          "label": "const function",
+          "line": 887,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "rainbowAngle",
+          "type": "function",
+          "label": "const function",
+          "line": 888,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "a",
+          "type": "function",
+          "label": "const function",
+          "line": 908,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "alpha",
+          "type": "function",
+          "label": "const function",
+          "line": 985,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "jitterX",
+          "type": "function",
+          "label": "const function",
+          "line": 1041,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "jitterY",
+          "type": "function",
+          "label": "const function",
+          "line": 1042,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "hue",
+          "type": "function",
+          "label": "const function",
+          "line": 1075,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "angle",
+          "type": "function",
+          "label": "const function",
+          "line": 1306,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "angle",
+          "type": "function",
+          "label": "const function",
+          "line": 1322,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "angle",
+          "type": "function",
+          "label": "const function",
+          "line": 1355,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "angle",
+          "type": "function",
+          "label": "const function",
+          "line": 1368,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "angle",
+          "type": "function",
+          "label": "const function",
+          "line": 1514,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "yOffset",
+          "type": "function",
+          "label": "const function",
+          "line": 1651,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "handleResize",
+          "type": "function",
+          "label": "const function",
+          "line": 1709,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "handleResize",
+          "type": "method",
+          "label": "method",
+          "line": 1718,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 1721,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "cancelAnimationFrame",
+          "type": "method",
+          "label": "method",
+          "line": 1723,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setTargetedEnemy",
+          "type": "method",
+          "label": "method",
+          "line": 1740,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setTargetedEnemy",
+          "type": "method",
+          "label": "method",
+          "line": 1746,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "activateAbility",
+          "type": "method",
+          "label": "method",
+          "line": 1757,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useTapGesture",
+          "type": "method",
+          "label": "method",
+          "line": 1763,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "useSwipeGesture",
+          "type": "method",
+          "label": "method",
+          "line": 1764,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "resetGame",
+          "type": "function",
+          "label": "const function",
+          "line": 1766,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setHp",
+          "type": "method",
+          "label": "method",
+          "line": 1767,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setGameOver",
+          "type": "method",
+          "label": "method",
+          "line": 1768,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setPaused",
+          "type": "method",
+          "label": "method",
+          "line": 1769,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "startBattle",
+          "type": "method",
+          "label": "method",
+          "line": 1770,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "setTargetedEnemy",
+          "type": "method",
+          "label": "method",
+          "line": 1771,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "renderAbilityButton",
+          "type": "function",
+          "label": "const function",
+          "line": 1779,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 1785,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 1817,
+          "file": "components/Screens/BattleScreen.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 1846,
+          "file": "components/Screens/BattleScreen.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Screens/BattleSummary.tsx",
+      "items": [
+        {
+          "name": "BattleSummaryProps",
+          "type": "interface",
+          "label": "interface",
+          "line": 6,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 20,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "setAnimatedGold",
+          "type": "method",
+          "label": "method",
+          "line": 31,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "setAnimatedGems",
+          "type": "method",
+          "label": "method",
+          "line": 32,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "setAnimatedScore",
+          "type": "method",
+          "label": "method",
+          "line": 33,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "clearInterval",
+          "type": "method",
+          "label": "method",
+          "line": 36,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 40,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "handleCollect",
+          "type": "function",
+          "label": "const function",
+          "line": 43,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "collectRewards",
+          "type": "method",
+          "label": "method",
+          "line": 45,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "endBattle",
+          "type": "method",
+          "label": "method",
+          "line": 46,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "setCollected",
+          "type": "method",
+          "label": "method",
+          "line": 47,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "handleRetry",
+          "type": "function",
+          "label": "const function",
+          "line": 51,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "handleCollect",
+          "type": "method",
+          "label": "method",
+          "line": 52,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "setTimeout",
+          "type": "method",
+          "label": "method",
+          "line": 53,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "handleGoHome",
+          "type": "function",
+          "label": "const function",
+          "line": 56,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "handleCollect",
+          "type": "method",
+          "label": "method",
+          "line": 57,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "setTimeout",
+          "type": "method",
+          "label": "method",
+          "line": 58,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 69,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "StatCard",
+          "type": "function",
+          "label": "const function",
+          "line": 214,
+          "file": "components/Screens/BattleSummary.tsx"
+        },
+        {
+          "name": "DetailRow",
+          "type": "function",
+          "label": "const function",
+          "line": 228,
+          "file": "components/Screens/BattleSummary.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Layout/Header.tsx",
+      "items": [
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 10,
+          "file": "components/Layout/Header.tsx"
+        },
+        {
+          "name": "ResourceItem",
+          "type": "function",
+          "label": "const function",
+          "line": 52,
+          "file": "components/Layout/Header.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Layout/Navigation.tsx",
+      "items": [
+        {
+          "name": "NavigationProps",
+          "type": "interface",
+          "label": "interface",
+          "line": 5,
+          "file": "components/Layout/Navigation.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 18,
+          "file": "components/Layout/Navigation.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 37,
+          "file": "components/Layout/Navigation.tsx"
+        }
+      ]
+    },
+    {
+      "file": "components/Layout/BottomNav.tsx",
+      "items": [
+        {
+          "name": "BottomNavProps",
+          "type": "interface",
+          "label": "interface",
+          "line": 5,
+          "file": "components/Layout/BottomNav.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 19,
+          "file": "components/Layout/BottomNav.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 41,
+          "file": "components/Layout/BottomNav.tsx"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 66,
+          "file": "components/Layout/BottomNav.tsx"
+        }
+      ]
+    },
+    {
+      "file": "utils/storage.ts",
+      "items": [
+        {
+          "name": "StorageWrapper",
+          "type": "interface",
+          "label": "interface",
+          "line": 8,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "createInitialShopState",
+          "type": "function",
+          "label": "const function",
+          "line": 16,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "createInitialChipState",
+          "type": "function",
+          "label": "const function",
+          "line": 27,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "createInitialGameState",
+          "type": "function",
+          "label": "const function",
+          "line": 35,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "saveGameState",
+          "type": "function",
+          "label": "const function",
+          "line": 72,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "loadGameState",
+          "type": "function",
+          "label": "const function",
+          "line": 92,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "clearGameState",
+          "type": "function",
+          "label": "const function",
+          "line": 115,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "hasSaveFile",
+          "type": "function",
+          "label": "const function",
+          "line": 126,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "formatNumber",
+          "type": "function",
+          "label": "const function",
+          "line": 137,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 139,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 142,
+          "file": "utils/storage.ts"
+        },
+        {
+          "name": "getWaveConfig",
+          "type": "function",
+          "label": "const function",
+          "line": 151,
+          "file": "utils/storage.ts"
+        }
+      ]
+    },
+    {
+      "file": "constants/chips.ts",
+      "items": [
+        {
+          "name": "getChipById",
+          "type": "function",
+          "label": "const function",
+          "line": 206,
+          "file": "constants/chips.ts"
+        },
+        {
+          "name": "calculateChipBonus",
+          "type": "function",
+          "label": "const function",
+          "line": 214,
+          "file": "constants/chips.ts"
+        },
+        {
+          "name": "calculateUpgradeCost",
+          "type": "function",
+          "label": "const function",
+          "line": 257,
+          "file": "constants/chips.ts"
+        },
+        {
+          "name": "calculateTotalChipBonuses",
+          "type": "function",
+          "label": "const function",
+          "line": 264,
+          "file": "constants/chips.ts"
+        },
+        {
+          "name": "getChipRarityColor",
+          "type": "function",
+          "label": "const function",
+          "line": 302,
+          "file": "constants/chips.ts"
+        },
+        {
+          "name": "getChipRarityBorder",
+          "type": "function",
+          "label": "const function",
+          "line": 314,
+          "file": "constants/chips.ts"
+        }
+      ]
+    },
+    {
+      "file": "constants/shopItems.ts",
+      "items": [
+        {
+          "name": "getAllShopItems",
+          "type": "function",
+          "label": "const function",
+          "line": 374,
+          "file": "constants/shopItems.ts"
+        },
+        {
+          "name": "findShopItem",
+          "type": "function",
+          "label": "const function",
+          "line": 381,
+          "file": "constants/shopItems.ts"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 382,
+          "file": "constants/shopItems.ts"
+        },
+        {
+          "name": "getRarityColor",
+          "type": "function",
+          "label": "const function",
+          "line": 390,
+          "file": "constants/shopItems.ts"
+        },
+        {
+          "name": "getRarityBorder",
+          "type": "function",
+          "label": "const function",
+          "line": 399,
+          "file": "constants/shopItems.ts"
+        }
+      ]
+    },
+    {
+      "file": "constants/enemies.ts",
+      "items": [
+        {
+          "name": "EnemyDefinition",
+          "type": "interface",
+          "label": "interface",
+          "line": 11,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "getEnemyHp",
+          "type": "function",
+          "label": "const function",
+          "line": 109,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "getCollisionDamage",
+          "type": "function",
+          "label": "const function",
+          "line": 121,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "getEnemySpeed",
+          "type": "function",
+          "label": "const function",
+          "line": 139,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "getSpawnInterval",
+          "type": "function",
+          "label": "const function",
+          "line": 153,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "getEnemiesRequired",
+          "type": "function",
+          "label": "const function",
+          "line": 166,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "selectEnemyType",
+          "type": "function",
+          "label": "const function",
+          "line": 174,
+          "file": "constants/enemies.ts"
+        },
+        {
+          "name": "getEnemyDefinition",
+          "type": "function",
+          "label": "const function",
+          "line": 200,
+          "file": "constants/enemies.ts"
+        }
+      ]
+    },
+    {
+      "file": "hooks/useResponsive.ts",
+      "items": [
+        {
+          "name": "ResponsiveState",
+          "type": "interface",
+          "label": "interface",
+          "line": 3,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "getCSSVar",
+          "type": "function",
+          "label": "const function",
+          "line": 36,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "useResponsive",
+          "type": "function",
+          "label": "const function",
+          "line": 43,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "getInitialState",
+          "type": "function",
+          "label": "function",
+          "line": 46,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "setState",
+          "type": "method",
+          "label": "method",
+          "line": 134,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 137,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "setTimeout",
+          "type": "method",
+          "label": "method",
+          "line": 144,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "updateState",
+          "type": "method",
+          "label": "method",
+          "line": 148,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 150,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "SwipeGesture",
+          "type": "interface",
+          "label": "interface",
+          "line": 160,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "useSwipeGesture",
+          "type": "function",
+          "label": "const function",
+          "line": 169,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 174,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "handleTouchStart",
+          "type": "function",
+          "label": "const function",
+          "line": 181,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "handleTouchEnd",
+          "type": "function",
+          "label": "const function",
+          "line": 186,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "onSwipe",
+          "type": "method",
+          "label": "method",
+          "line": 204,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 217,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "TapEvent",
+          "type": "interface",
+          "label": "interface",
+          "line": 225,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "useTapGesture",
+          "type": "function",
+          "label": "const function",
+          "line": 232,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "useEffect",
+          "type": "method",
+          "label": "method",
+          "line": 237,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "handleTouchStart",
+          "type": "function",
+          "label": "const function",
+          "line": 245,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "handleTouchEnd",
+          "type": "function",
+          "label": "const function",
+          "line": 251,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "onTap",
+          "type": "method",
+          "label": "method",
+          "line": 261,
+          "file": "hooks/useResponsive.ts"
+        },
+        {
+          "name": "return",
+          "type": "method",
+          "label": "method",
+          "line": 273,
+          "file": "hooks/useResponsive.ts"
+        }
+      ]
+    }
+  ]
+}

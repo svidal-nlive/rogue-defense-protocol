@@ -1,0 +1,35 @@
+services:
+  rogue-defense:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rogue-defense-protocol:latest
+    container_name: rogue-defense-protocol
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      # Router configuration
+      - "traefik.http.routers.rogue-defense.rule=Host(`rogue-defense.vectorhost.net`)"
+      - "traefik.http.routers.rogue-defense.entrypoints=websecure"
+      - "traefik.http.routers.rogue-defense.tls=true"
+      - "traefik.http.routers.rogue-defense.tls.certresolver=vpsresolver"
+      - "traefik.http.routers.rogue-defense.priority=200"
+      - "traefik.http.routers.rogue-defense.middlewares=secure-headers@docker"
+      # Service definition
+      - "traefik.http.services.rogue-defense.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+networks:
+  proxy:
+    external: true
