@@ -1,9 +1,6 @@
 services:
   rogue-defense:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: rogue-defense-protocol:latest
+    image: ghcr.io/svidal-nlive/rogue-defense-protocol:latest
     container_name: rogue-defense-protocol
     restart: unless-stopped
     networks:
