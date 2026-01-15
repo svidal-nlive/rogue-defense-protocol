@@ -102,6 +102,12 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   const [screenShake, setScreenShake] = useState(false);
   const [targetedEnemy, setTargetedEnemy] = useState<string | null>(null);
   
+  // Use a ref to track game over state for the game loop (avoids effect re-runs)
+  const gameOverRef = useRef(false);
+  
+  // Track if game state has been initialized (to prevent re-initialization on effect re-runs)
+  const isInitializedRef = useRef(false);
+  
   // Ability state
   const [abilities, setAbilities] = useState<Ability[]>([
     { id: 'plasma_burst', name: 'Plasma Burst', hotkey: 'Q', cooldown: 10000, currentCooldown: 0, duration: 0, activeUntil: 0, icon: <Flame size={22} />, color: 'text-orange-500' },
@@ -153,6 +159,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     gameStateRef.current.hp = hp;
   }, [hp]);
 
+  // Sync gameOver to ref (so game loop checks ref instead of triggering effect re-run)
+  useEffect(() => {
+    gameOverRef.current = gameOver;
+  }, [gameOver]);
+
   // Sync speedMultiplier to ref (so game loop doesn't restart on speed change)
   useEffect(() => {
     speedMultiplierRef.current = speedMultiplier;
@@ -160,12 +171,13 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
 
   // Wave progression check
   useEffect(() => {
-    if (enemiesKilledThisWave >= enemiesRequired && !gameOver) {
+    // Use ref to prevent wave advancement after game over
+    if (enemiesKilledThisWave >= enemiesRequired && !gameOverRef.current) {
       advanceWave();
       gameStateRef.current.showWaveText = true;
       gameStateRef.current.waveTextTimer = 2000;
     }
-  }, [enemiesKilledThisWave, enemiesRequired, advanceWave, gameOver]);
+  }, [enemiesKilledThisWave, enemiesRequired, advanceWave]);
 
   // Ability cooldown tick
   useEffect(() => {
@@ -342,15 +354,12 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activateAbility, paused, gameOver]);
 
-  // Main Game Loop
+  // Initialize game state on mount only (separate from game loop to prevent re-initialization)
   useEffect(() => {
-    let frameId: number;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // Reset game state on mount
+    if (isInitializedRef.current) return;
+    isInitializedRef.current = true;
+    
+    // Initialize game state once on mount
     gameStateRef.current = {
       ...gameStateRef.current,
       enemies: [],
@@ -362,11 +371,22 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     };
     setHp(3000);
     setGameOver(false);
+    gameOverRef.current = false;
+  }, []);
+
+  // Main Game Loop
+  useEffect(() => {
+    let frameId: number;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
     const waveConfig = getWaveConfig(wave);
 
     const loop = (time: number) => {
-      if (gameOver) return;
+      // Use ref to check game over to avoid effect re-run triggering reset
+      if (gameOverRef.current) return;
 
       const rawDelta = time - gameStateRef.current.lastTime;
       gameStateRef.current.lastTime = time;
@@ -655,7 +675,9 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       }
 
       // Check game over - auto-exit to show summary after brief delay
-      if (gState.hp <= 0 && !gameOver) {
+      // Use ref to prevent multiple triggers and race conditions
+      if (gState.hp <= 0 && !gameOverRef.current) {
+        gameOverRef.current = true; // Set ref immediately to prevent re-triggers
         setGameOver(true);
         // Brief delay to show critical failure, then auto-exit to summary
         setTimeout(() => {
@@ -1723,7 +1745,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       cancelAnimationFrame(frameId);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused, gameOver, stats, wave, spawnEnemy, createExplosion, createDamageNumber, killEnemy, boostEffects, equippedWeaponSkin, equippedBaseSkin]);
+  }, [paused, stats, wave, spawnEnemy, createExplosion, createDamageNumber, killEnemy, boostEffects, equippedWeaponSkin, equippedBaseSkin]);
 
   // Handle tap to target enemy
   const handleCanvasTap = useCallback((tap: TapEvent) => {
@@ -1764,6 +1786,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   useSwipeGesture(containerRef, handleSwipe, 60);
 
   const resetGame = () => {
+    gameOverRef.current = false;
+    isInitializedRef.current = false; // Allow re-initialization
     setHp(3000);
     setGameOver(false);
     setPaused(false);
@@ -1773,6 +1797,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     gameStateRef.current.projectiles = [];
     gameStateRef.current.particles = [];
     gameStateRef.current.damageNumbers = [];
+    gameStateRef.current.hp = 3000;
   };
 
   // Render ability button (reusable for mobile/desktop)
