@@ -177,16 +177,16 @@ const MissionsScreen: React.FC = () => {
   return (
     <div className="h-full flex flex-col lg:flex-row overflow-hidden bg-cyber-black relative">
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col p-4 lg:p-8 pb-24 lg:pb-8 min-h-0">
+      <div className="flex-1 flex flex-col p-3 sm:p-4 lg:p-8 pb-28 sm:pb-32 lg:pb-8 min-h-0">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-4 lg:mb-8 shrink-0 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 sm:mb-4 lg:mb-8 shrink-0 gap-2 sm:gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-orbitron font-black tracking-tighter">MISSIONS</h1>
-            <p className="text-xs text-gray-500 uppercase tracking-[0.4em]">Objective Database</p>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-orbitron font-black tracking-tighter">MISSIONS</h1>
+            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-[0.3em] sm:tracking-[0.4em]">Objective Database</p>
           </div>
           
           {/* Stats Summary */}
-          <div className="flex gap-3 lg:gap-4">
+          <div className="flex gap-2 sm:gap-3 lg:gap-4">
             <StatBadge label="Completed" value={completedCount} color="text-cyber-green" />
             <StatBadge label="In Progress" value={inProgressCount} color="text-cyber-yellow" />
             {readyToClaimCount > 0 && (
@@ -195,14 +195,15 @@ const MissionsScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Tabs */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar mb-4 lg:mb-6 shrink-0 pb-2">
-          {tabs.map(tab => (
+        {/* Category Tabs - Improved horizontal scroll with visible indicators */}
+        <div className="relative shrink-0 mb-3 sm:mb-4 lg:mb-6">
+          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
+            {tabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`
-                flex items-center gap-1.5 px-3 lg:px-4 py-2 rounded-lg text-[10px] lg:text-xs font-bold font-orbitron uppercase whitespace-nowrap transition-all
+                flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 lg:px-4 py-1.5 sm:py-2 rounded-lg text-[9px] sm:text-[10px] lg:text-xs font-bold font-orbitron uppercase whitespace-nowrap transition-all shrink-0
                 ${activeTab === tab.id 
                   ? 'bg-white text-black shadow-lg shadow-white/10' 
                   : 'bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/5'}
@@ -212,10 +213,11 @@ const MissionsScreen: React.FC = () => {
               {tab.label}
             </button>
           ))}
+          </div>
         </div>
 
         {/* Missions List */}
-        <div className="flex-1 overflow-y-auto no-scrollbar space-y-3">
+        <div className="flex-1 overflow-y-auto no-scrollbar space-y-2 sm:space-y-3">
           {sortedMissions.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-gray-500">
               <Target size={48} className="mb-4 opacity-30" />
@@ -284,9 +286,9 @@ interface StatBadgeProps {
 }
 
 const StatBadge: React.FC<StatBadgeProps> = ({ label, value, color, pulse }) => (
-  <div className={`bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-center ${pulse ? 'animate-pulse' : ''}`}>
-    <div className={`text-lg lg:text-xl font-bold font-orbitron ${color}`}>{value}</div>
-    <div className="text-[9px] text-gray-500 uppercase tracking-wider">{label}</div>
+  <div className={`bg-white/5 border border-white/10 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-center ${pulse ? 'animate-pulse' : ''}`}>
+    <div className={`text-base sm:text-lg lg:text-xl font-bold font-orbitron ${color}`}>{value}</div>
+    <div className="text-[8px] sm:text-[9px] text-gray-500 uppercase tracking-wider">{label}</div>
   </div>
 );
 
@@ -315,7 +317,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick, getCategory
       onClick={onClick}
       disabled={isClaimed}
       className={`
-        w-full p-4 rounded-xl border transition-all text-left group relative overflow-hidden
+        w-full p-3 sm:p-4 rounded-lg sm:rounded-xl border transition-all text-left group relative overflow-hidden
         ${isCompleted 
           ? 'bg-cyber-green/10 border-cyber-green/30 hover:border-cyber-green/50' 
           : isClaimed
@@ -328,39 +330,41 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick, getCategory
     >
       {/* Category indicator line */}
       <div 
-        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl"
+        className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg sm:rounded-l-xl"
         style={{ backgroundColor: categoryColor }}
       />
       
-      <div className="flex items-start gap-3 pl-2">
+      <div className="flex items-start gap-2 sm:gap-3 pl-1.5 sm:pl-2">
         {/* Icon */}
         <div 
-          className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+          className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center shrink-0"
           style={{ backgroundColor: `${categoryColor}20`, color: categoryColor }}
         >
-          {isCompleted ? <Check size={18} /> : isLocked ? <Lock size={18} /> : getCategoryIcon(mission.category)}
+          {isCompleted ? <Check size={16} className="sm:hidden" /> : isLocked ? <Lock size={16} className="sm:hidden" /> : getCategoryIcon(mission.category)}
+          {isCompleted ? <Check size={18} className="hidden sm:block" /> : isLocked ? <Lock size={18} className="hidden sm:block" /> : null}
         </div>
         
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className={`text-sm font-bold truncate ${isClaimed ? 'text-gray-500' : 'text-white'}`}>
+          <div className="flex items-start justify-between gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+            <h3 className={`text-xs sm:text-sm font-bold truncate ${isClaimed ? 'text-gray-500' : 'text-white'}`}>
               {mission.name}
             </h3>
             {timeRemaining && (
-              <div className="flex items-center gap-1 text-[9px] text-gray-400 whitespace-nowrap">
-                <Clock size={10} />
+              <div className="flex items-center gap-0.5 sm:gap-1 text-[8px] sm:text-[9px] text-gray-400 whitespace-nowrap">
+                <Clock size={9} className="sm:hidden" />
+                <Clock size={10} className="hidden sm:block" />
                 {timeRemaining}
               </div>
             )}
           </div>
           
-          <p className="text-xs text-gray-500 line-clamp-1 mb-2">{mission.description}</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 line-clamp-1 mb-1.5 sm:mb-2">{mission.description}</p>
           
           {/* Progress bar */}
           {!isClaimed && !isLocked && (
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="flex-1 h-1 sm:h-1.5 bg-white/10 rounded-full overflow-hidden">
                 <div 
                   className="h-full rounded-full transition-all duration-300"
                   style={{ 
@@ -369,7 +373,7 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick, getCategory
                   }}
                 />
               </div>
-              <span className="text-[10px] text-gray-400 font-mono">
+              <span className="text-[9px] sm:text-[10px] text-gray-400 font-mono">
                 {Math.floor(progressPercent)}%
               </span>
             </div>
@@ -379,12 +383,14 @@ const MissionCard: React.FC<MissionCardProps> = ({ mission, onClick, getCategory
         {/* Arrow / Status */}
         <div className="shrink-0">
           {isCompleted ? (
-            <div className="bg-cyber-green text-black px-2 py-1 rounded text-[9px] font-bold">CLAIM</div>
+            <div className="bg-cyber-green text-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[8px] sm:text-[9px] font-bold">CLAIM</div>
           ) : isClaimed ? (
-            <Check size={16} className="text-gray-500" />
+            <Check size={14} className="text-gray-500 sm:hidden" />
           ) : (
-            <ChevronRight size={16} className="text-gray-500 group-hover:text-white transition-colors" />
+            <ChevronRight size={14} className="text-gray-500 group-hover:text-white transition-colors sm:hidden" />
           )}
+          {isClaimed && <Check size={16} className="text-gray-500 hidden sm:block" />}
+          {!isCompleted && !isClaimed && <ChevronRight size={16} className="text-gray-500 group-hover:text-white transition-colors hidden sm:block" />}
         </div>
       </div>
     </button>

@@ -10,7 +10,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
   return (
     <div className="h-full overflow-y-auto no-scrollbar bg-cyber-black lg:bg-transparent">
       {/* Content Container with Safe Area Padding for Mobile Nav */}
-      <div className="h-full max-w-7xl mx-auto w-full p-4 pb-28 lg:p-10 lg:pb-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:content-center">
+      <div className="h-full max-w-7xl mx-auto w-full p-4 pb-32 lg:p-10 lg:pb-10 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 lg:content-center">
         
         {/* Left Column: Tactical Intel (Desktop Only) */}
         <div className="hidden lg:flex lg:col-span-3 flex-col space-y-6">
@@ -42,48 +42,48 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
 
         {/* Center Column: Deployment Zone */}
         <div className="lg:col-span-6 flex flex-col items-center justify-center lg:justify-start">
-          <div className="w-full max-w-lg space-y-6 lg:space-y-8">
+          <div className="w-full max-w-lg space-y-4 lg:space-y-8">
             <div className="text-center space-y-1 lg:space-y-2">
-              <h1 className="text-3xl lg:text-5xl font-orbitron font-black text-white tracking-tighter">NEON DEFENSE</h1>
-              <p className="text-gray-500 font-rajdhani text-xs lg:text-sm uppercase tracking-[0.4em]">Hybrid Strategy Protocol</p>
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-orbitron font-black text-white tracking-tighter">NEON DEFENSE</h1>
+              <p className="text-gray-500 font-rajdhani text-[10px] sm:text-xs lg:text-sm uppercase tracking-[0.3em] sm:tracking-[0.4em]">Hybrid Strategy Protocol</p>
             </div>
 
-            {/* Campaign Card */}
+            {/* Campaign Card - Optimized for Mobile */}
             <div className="relative group w-full">
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue via-cyber-pink to-cyber-yellow rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-              <div className="relative bg-cyber-panel border border-white/10 rounded-[2rem] overflow-hidden aspect-[1/1.2] lg:aspect-[16/9] shadow-2xl flex flex-col">
+              <div className="absolute -inset-1 bg-gradient-to-r from-cyber-blue via-cyber-pink to-cyber-yellow rounded-2xl lg:rounded-[2rem] blur opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+              <div className="relative bg-cyber-panel border border-white/10 rounded-2xl lg:rounded-[2rem] overflow-hidden aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] shadow-2xl flex flex-col">
                 {/* Visuals */}
                 <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
                 <div className="absolute inset-0 bg-gradient-to-t from-cyber-black via-cyber-black/50 to-transparent"></div>
                 
                 {/* Animated Graphic Placeholder */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
-                     <div className="w-48 h-48 border border-cyber-blue/30 rounded-full animate-spin [animation-duration:10s]"></div>
-                     <div className="absolute w-32 h-32 border border-cyber-pink/30 rotate-45"></div>
+                     <div className="w-32 sm:w-40 lg:w-48 h-32 sm:h-40 lg:h-48 border border-cyber-blue/30 rounded-full animate-spin [animation-duration:10s]"></div>
+                     <div className="absolute w-24 sm:w-28 lg:w-32 h-24 sm:h-28 lg:h-32 border border-cyber-pink/30 rotate-45"></div>
                 </div>
 
-                <div className="absolute top-6 left-6 right-6 flex justify-between items-start z-10">
-                    <div className="bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 text-[10px] font-bold font-orbitron text-cyber-blue">
+                <div className="absolute top-3 sm:top-4 lg:top-6 left-3 sm:left-4 lg:left-6 right-3 sm:right-4 lg:right-6 flex justify-between items-start z-10">
+                    <div className="bg-black/60 backdrop-blur-md px-2 sm:px-3 py-1 rounded-full border border-white/10 text-[9px] sm:text-[10px] font-bold font-orbitron text-cyber-blue">
                         SECTOR 04
                     </div>
                     <div className="flex flex-col items-end">
-                        <div className="text-[9px] font-bold text-gray-400 font-orbitron tracking-widest">THREAT</div>
-                        <div className="text-xs font-bold text-cyber-pink">EXTREME</div>
+                        <div className="text-[8px] sm:text-[9px] font-bold text-gray-400 font-orbitron tracking-widest">THREAT</div>
+                        <div className="text-[10px] sm:text-xs font-bold text-cyber-pink">EXTREME</div>
                     </div>
                 </div>
 
-                <div className="mt-auto p-6 lg:p-8 space-y-4 z-20 relative">
+                <div className="mt-auto p-4 sm:p-5 lg:p-8 space-y-3 lg:space-y-4 z-20 relative">
                   <div>
-                    <div className="text-[10px] font-bold text-cyber-blue font-orbitron mb-1 tracking-widest">ACTIVE MISSION</div>
-                    <h2 className="text-2xl lg:text-3xl font-bold font-orbitron text-white leading-none mb-1">VOID GATEWAY</h2>
-                    <p className="text-gray-400 text-xs line-clamp-2">Geometric anomalies detected. Intercept and neutralize immediately.</p>
+                    <div className="text-[9px] sm:text-[10px] font-bold text-cyber-blue font-orbitron mb-0.5 lg:mb-1 tracking-widest">ACTIVE MISSION</div>
+                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold font-orbitron text-white leading-none mb-0.5 lg:mb-1">VOID GATEWAY</h2>
+                    <p className="text-gray-400 text-[10px] sm:text-xs line-clamp-2">Geometric anomalies detected. Intercept and neutralize immediately.</p>
                   </div>
                   
                   <button 
                     onClick={() => onNavigate(Screen.BATTLE)}
-                    className="w-full h-14 lg:h-16 bg-white text-black rounded-xl font-orbitron font-black tracking-widest hover:bg-cyber-blue transition-all active:scale-95 flex items-center justify-center space-x-3 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                    className="w-full h-12 sm:h-14 lg:h-16 bg-white text-black rounded-xl font-orbitron font-black text-sm sm:text-base tracking-widest hover:bg-cyber-blue transition-all active:scale-95 flex items-center justify-center space-x-2 sm:space-x-3 shadow-[0_0_20px_rgba(255,255,255,0.3)]"
                   >
-                    <Play fill="black" size={20} />
+                    <Play fill="black" size={18} />
                     <span>DEPLOY</span>
                   </button>
                 </div>
@@ -91,17 +91,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onNavigate }) => {
             </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-3 lg:gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
               <StatBrief label="Global Rank" value="#1,248" />
               <StatBrief label="Win Rate" value="78%" />
               <StatBrief label="Power" value="4.2k" />
             </div>
 
              {/* Mobile-Only Actions List */}
-            <div className="lg:hidden flex flex-col space-y-3 pt-4">
-                <h3 className="text-xs font-orbitron font-bold text-gray-500 px-1 tracking-widest uppercase">Daily Ops</h3>
-                <OperationCard icon={<Activity size={18} />} title="Patrol Simulation" desc="Collect idle rewards" status="Ready" />
-                <OperationCard icon={<ShieldAlert size={18} />} title="Boss Raid" desc="High-tier Loot" status="Locked" locked />
+            <div className="lg:hidden flex flex-col space-y-2 sm:space-y-3">
+                <h3 className="text-[10px] sm:text-xs font-orbitron font-bold text-gray-500 px-1 tracking-widest uppercase">Daily Ops</h3>
+                <OperationCard icon={<Activity size={16} />} title="Patrol Simulation" desc="Collect idle rewards" status="Ready" />
+                <OperationCard icon={<ShieldAlert size={16} />} title="Boss Raid" desc="High-tier Loot" status="Locked" locked />
             </div>
           </div>
         </div>
@@ -139,28 +139,28 @@ const IntelItem = ({ label, value, color }: { label: string, value: string, colo
 );
 
 const StatBrief = ({ label, value }: { label: string, value: string }) => (
-  <div className="bg-white/5 border border-white/5 rounded-xl p-3 text-center backdrop-blur-sm">
-    <div className="text-[9px] lg:text-[10px] text-gray-500 uppercase tracking-tighter mb-1">{label}</div>
-    <div className="text-sm font-bold font-orbitron">{value}</div>
+  <div className="bg-white/5 border border-white/5 rounded-lg sm:rounded-xl p-2 sm:p-3 text-center backdrop-blur-sm">
+    <div className="text-[8px] sm:text-[9px] lg:text-[10px] text-gray-500 uppercase tracking-tighter mb-0.5 sm:mb-1">{label}</div>
+    <div className="text-xs sm:text-sm font-bold font-orbitron">{value}</div>
   </div>
 );
 
 const OperationCard = ({ icon, title, desc, status, locked }: { icon: any, title: string, desc: string, status: string, locked?: boolean }) => (
   <button className={`
-    w-full flex items-center p-3 lg:p-4 rounded-xl border transition-all text-left group
+    w-full flex items-center p-2.5 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl border transition-all text-left group
     ${locked ? 'bg-black/40 border-white/5 opacity-50 cursor-not-allowed' : 'bg-white/5 border-white/10 hover:border-cyber-blue/50'}
   `}>
     <div className={`
-      w-10 h-10 lg:w-12 lg:h-12 rounded-lg flex items-center justify-center mr-3 lg:mr-4 transition-colors shrink-0
+      w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-lg flex items-center justify-center mr-2.5 sm:mr-3 lg:mr-4 transition-colors shrink-0
       ${locked ? 'bg-gray-800 text-gray-600' : 'bg-white/10 text-white group-hover:bg-cyber-blue group-hover:text-black'}
     `}>
       {icon}
     </div>
     <div className="flex-1 min-w-0">
-      <div className="text-xs lg:text-sm font-bold text-white truncate">{title}</div>
-      <div className="text-[10px] text-gray-500 truncate">{desc}</div>
+      <div className="text-[11px] sm:text-xs lg:text-sm font-bold text-white truncate">{title}</div>
+      <div className="text-[9px] sm:text-[10px] text-gray-500 truncate">{desc}</div>
     </div>
-    <div className={`text-[9px] lg:text-[10px] font-bold px-2 py-1 rounded bg-black/40 whitespace-nowrap ${status === 'Ready' ? 'text-cyber-green' : 'text-gray-500'}`}>
+    <div className={`text-[8px] sm:text-[9px] lg:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-black/40 whitespace-nowrap ${status === 'Ready' ? 'text-cyber-green' : 'text-gray-500'}`}>
       {status}
     </div>
   </button>

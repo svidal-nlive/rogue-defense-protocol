@@ -90,40 +90,43 @@ const GuardianScreen: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col lg:flex-row p-4 lg:p-8 gap-4 lg:gap-6 overflow-hidden relative">
+    <div className="h-full flex flex-col lg:flex-row p-3 sm:p-4 lg:p-8 gap-3 sm:gap-4 lg:gap-6 overflow-hidden relative">
       
       {/* Mobile View Switcher */}
-      <div className="lg:hidden shrink-0 flex p-1 bg-white/5 rounded-xl border border-white/10 mb-2">
+      <div className="lg:hidden shrink-0 flex p-1 bg-white/5 rounded-xl border border-white/10 mb-1 sm:mb-2">
         <button 
           onClick={() => setMobileView('STATS')}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${mobileView === 'STATS' ? 'bg-cyber-blue text-black font-bold' : 'text-gray-500'}`}
+          className={`flex-1 py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all ${mobileView === 'STATS' ? 'bg-cyber-blue text-black font-bold' : 'text-gray-500'}`}
         >
-          <BarChart2 size={14} />
-          <span className="text-[10px] font-orbitron">STATS</span>
+          <BarChart2 size={12} className="sm:hidden" />
+          <BarChart2 size={14} className="hidden sm:block" />
+          <span className="text-[9px] sm:text-[10px] font-orbitron">STATS</span>
         </button>
         <button 
           onClick={() => setMobileView('WEAPONS')}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${mobileView === 'WEAPONS' ? 'bg-cyber-pink text-black font-bold' : 'text-gray-500'}`}
+          className={`flex-1 py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all ${mobileView === 'WEAPONS' ? 'bg-cyber-pink text-black font-bold' : 'text-gray-500'}`}
         >
-          <Crosshair size={14} />
-          <span className="text-[10px] font-orbitron">WEAPONS</span>
+          <Crosshair size={12} className="sm:hidden" />
+          <Crosshair size={14} className="hidden sm:block" />
+          <span className="text-[9px] sm:text-[10px] font-orbitron">WEAPONS</span>
         </button>
         <button 
           onClick={() => setMobileView('CHIPS')}
-          className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all ${mobileView === 'CHIPS' ? 'bg-cyber-purple text-white font-bold' : 'text-gray-500'}`}
+          className={`flex-1 py-1.5 sm:py-2 rounded-lg flex items-center justify-center gap-1 sm:gap-1.5 transition-all ${mobileView === 'CHIPS' ? 'bg-cyber-purple text-white font-bold' : 'text-gray-500'}`}
         >
-          <Cpu size={14} />
-          <span className="text-[10px] font-orbitron">CHIPS</span>
+          <Cpu size={12} className="sm:hidden" />
+          <Cpu size={14} className="hidden sm:block" />
+          <span className="text-[9px] sm:text-[10px] font-orbitron">CHIPS</span>
         </button>
       </div>
 
       {/* Left Column: Stats Overview */}
       <div className={`
         ${mobileView === 'STATS' ? 'flex' : 'hidden'} lg:flex
-        lg:w-[420px] flex-col gap-4 overflow-y-auto no-scrollbar pb-24 lg:pb-0
+        lg:w-[420px] flex-col gap-3 sm:gap-4 overflow-y-auto no-scrollbar pb-28 sm:pb-32 lg:pb-0
       `}>
         {/* Radar Chart Panel */}
-        <div className="bg-cyber-panel border border-white/5 rounded-3xl p-6 relative overflow-hidden shrink-0">
+        <div className="bg-cyber-panel border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6 relative overflow-hidden shrink-0">
           <div className="absolute top-0 right-0 p-4 opacity-10">
             <Activity size={100} />
           </div>
@@ -238,12 +241,12 @@ const GuardianScreen: React.FC = () => {
       {/* Mobile: Weapons Panel */}
       <div className={`
         ${mobileView === 'WEAPONS' ? 'flex' : 'hidden'} lg:hidden
-        flex-col gap-4 pb-24 overflow-y-auto
+        flex-col gap-3 sm:gap-4 pb-28 sm:pb-32 overflow-y-auto
       `}>
-        <div className="bg-cyber-panel border border-white/5 rounded-3xl p-6">
-          <h2 className="text-xs font-orbitron font-bold text-cyber-pink tracking-[0.3em] mb-4">WEAPON_SYSTEMS</h2>
+        <div className="bg-cyber-panel border border-white/5 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+          <h2 className="text-[10px] sm:text-xs font-orbitron font-bold text-cyber-pink tracking-[0.2em] sm:tracking-[0.3em] mb-3 sm:mb-4">WEAPON_SYSTEMS</h2>
           
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
             {Object.entries(WEAPONS).map(([key, weapon]) => {
               const weaponType = key as WeaponType;
               const isUnlocked = unlockedWeapons?.includes(weaponType);
@@ -260,36 +263,37 @@ const GuardianScreen: React.FC = () => {
                     }
                   }}
                   className={`
-                    relative p-4 rounded-xl border-2 transition-all
+                    relative p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 transition-all
                     ${isEquipped ? 'border-cyber-pink bg-cyber-pink/20 ring-2 ring-cyber-pink/30' : 
                       isUnlocked ? 'border-white/20 bg-white/5 hover:border-white/40' : 
                       'border-white/10 bg-black/30 opacity-70'}
                   `}
                 >
-                  {!isUnlocked && <Lock size={14} className="absolute top-2 right-2 text-gray-500" />}
+                  {!isUnlocked && <Lock size={12} className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 text-gray-500" />}
                   {isEquipped && (
-                    <div className="absolute top-2 right-2 text-[8px] font-bold text-cyber-pink bg-cyber-pink/20 px-1.5 py-0.5 rounded">
+                    <div className="absolute top-1.5 sm:top-2 right-1.5 sm:right-2 text-[7px] sm:text-[8px] font-bold text-cyber-pink bg-cyber-pink/20 px-1 sm:px-1.5 py-0.5 rounded">
                       EQUIPPED
                     </div>
                   )}
                   
-                  <div className="flex flex-col items-center gap-2">
-                    <div className={`p-3 rounded-xl ${isEquipped ? 'bg-cyber-pink/30' : 'bg-white/10'}`}>
-                      <WeaponIcon type={weaponType} size={28} />
+                  <div className="flex flex-col items-center gap-1.5 sm:gap-2">
+                    <div className={`p-2 sm:p-3 rounded-lg sm:rounded-xl ${isEquipped ? 'bg-cyber-pink/30' : 'bg-white/10'}`}>
+                      <WeaponIcon type={weaponType} size={24} />
                     </div>
-                    <div className="text-sm font-orbitron font-bold">{weapon.name}</div>
-                    <div className="text-[10px] text-gray-400 text-center line-clamp-2">{weapon.description}</div>
+                    <div className="text-xs sm:text-sm font-orbitron font-bold">{weapon.name}</div>
+                    <div className="text-[9px] sm:text-[10px] text-gray-400 text-center line-clamp-2">{weapon.description}</div>
                     
                     {!isUnlocked && (
-                      <div className="flex items-center gap-1 text-cyber-yellow text-xs font-bold mt-1">
-                        <Coins size={12} /> {weapon.unlockCost}
+                      <div className="flex items-center gap-1 text-cyber-yellow text-[10px] sm:text-xs font-bold mt-0.5 sm:mt-1">
+                        <Coins size={10} className="sm:hidden" />
+                        <Coins size={12} className="hidden sm:block" /> {weapon.unlockCost}
                       </div>
                     )}
                     
-                    <div className="flex flex-wrap gap-1 justify-center mt-1">
-                      {weapon.splashRadius && <span className="text-[9px] px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400">SPLASH</span>}
-                      {weapon.piercing && <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400">PIERCE</span>}
-                      {weapon.slowPercent && <span className="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400">SLOW</span>}
+                    <div className="flex flex-wrap gap-0.5 sm:gap-1 justify-center mt-0.5 sm:mt-1">
+                      {weapon.splashRadius && <span className="text-[8px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400">SPLASH</span>}
+                      {weapon.piercing && <span className="text-[8px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400">PIERCE</span>}
+                      {weapon.slowPercent && <span className="text-[8px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400">SLOW</span>}
                     </div>
                   </div>
                 </button>
@@ -309,24 +313,25 @@ const GuardianScreen: React.FC = () => {
       {/* Right Column: Chip Array */}
       <div className={`
         ${mobileView === 'CHIPS' ? 'flex' : 'hidden'} lg:flex
-        flex-1 flex-col min-h-0 bg-cyber-panel/50 border border-white/5 rounded-3xl p-4 lg:p-6 backdrop-blur-xl
-        pb-2 lg:pb-6
+        flex-1 flex-col min-h-0 bg-cyber-panel/50 border border-white/5 rounded-2xl sm:rounded-3xl p-3 sm:p-4 lg:p-6 backdrop-blur-xl
+        pb-28 sm:pb-32 lg:pb-6
       `}>
-        <div className="flex items-center justify-between mb-4 shrink-0">
+        <div className="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
           <div>
-            <h2 className="text-lg font-orbitron font-bold">NEURAL_ARRAY</h2>
-            <p className="text-[10px] text-gray-500 uppercase tracking-widest">6 Chip Slots • Tap to inspect</p>
+            <h2 className="text-base sm:text-lg font-orbitron font-bold">NEURAL_ARRAY</h2>
+            <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wider sm:tracking-widest">6 Chip Slots • Tap to inspect</p>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-500">Gold</div>
-            <div className="text-sm font-bold text-cyber-yellow flex items-center gap-1">
-              <Coins size={14} /> {formatNumber(stats.gold)}
+            <div className="text-[10px] sm:text-xs text-gray-500">Gold</div>
+            <div className="text-xs sm:text-sm font-bold text-cyber-yellow flex items-center gap-1">
+              <Coins size={12} className="sm:hidden" />
+              <Coins size={14} className="hidden sm:block" /> {formatNumber(stats.gold)}
             </div>
           </div>
         </div>
 
         {/* Chip Slots Grid (6 slots) */}
-        <div className="grid grid-cols-3 gap-3 mb-4 shrink-0">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4 shrink-0">
           {[0, 1, 2, 3, 4, 5].map(slotIndex => {
             const ownedChip = getChipInSlot(slotIndex);
             const chipDef = ownedChip ? getChipById(ownedChip.chipId) : null;
@@ -337,7 +342,7 @@ const GuardianScreen: React.FC = () => {
                 key={slotIndex}
                 onClick={() => ownedChip && setSelectedChipInstanceId(ownedChip.instanceId)}
                 className={`
-                  aspect-square rounded-2xl border-2 flex flex-col items-center justify-center transition-all relative overflow-hidden
+                  aspect-square rounded-xl sm:rounded-2xl border-2 flex flex-col items-center justify-center transition-all relative overflow-hidden
                   ${ownedChip && chipDef ? getChipRarityBorder(chipDef.rarity) : 'border-dashed border-white/20'}
                   ${isSelected ? 'ring-4 ring-white/30 scale-105 z-10' : 'hover:scale-[1.02]'}
                   ${ownedChip ? 'bg-cyber-dark/60' : 'bg-black/20'}
@@ -346,15 +351,15 @@ const GuardianScreen: React.FC = () => {
                 {ownedChip && chipDef ? (
                   <>
                     <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
-                    <ChipIcon type={chipDef.type} size={24} color={getChipRarityColor(chipDef.rarity)} />
-                    <div className="absolute bottom-1.5 font-mono text-[9px] font-black text-white/80">LV.{ownedChip.level}</div>
+                    <ChipIcon type={chipDef.type} size={20} color={getChipRarityColor(chipDef.rarity)} />
+                    <div className="absolute bottom-1 sm:bottom-1.5 font-mono text-[8px] sm:text-[9px] font-black text-white/80">LV.{ownedChip.level}</div>
                     <div 
-                      className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full"
+                      className="absolute top-1 sm:top-1.5 right-1 sm:right-1.5 w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full"
                       style={{ backgroundColor: getChipRarityColor(chipDef.rarity) }}
                     />
                   </>
                 ) : (
-                  <div className="text-white/20 text-xs font-orbitron">EMPTY</div>
+                  <div className="text-white/20 text-[10px] sm:text-xs font-orbitron">EMPTY</div>
                 )}
               </button>
             );
@@ -362,15 +367,15 @@ const GuardianScreen: React.FC = () => {
         </div>
 
         {/* Divider */}
-        <div className="flex items-center gap-2 mb-4 shrink-0">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4 shrink-0">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-[9px] text-gray-500 font-orbitron">INVENTORY</span>
+          <span className="text-[8px] sm:text-[9px] text-gray-500 font-orbitron">INVENTORY</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
 
         {/* Inventory (unequipped chips) */}
         <div className="flex-1 overflow-y-auto no-scrollbar">
-          <div className="grid grid-cols-4 lg:grid-cols-5 gap-2">
+          <div className="grid grid-cols-4 lg:grid-cols-5 gap-1.5 sm:gap-2">
             {chipState.ownedChips.filter(c => !c.equipped).map(ownedChip => {
               const chipDef = getChipById(ownedChip.chipId);
               if (!chipDef) return null;

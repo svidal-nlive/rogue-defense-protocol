@@ -420,26 +420,27 @@ const ShopScreen: React.FC = () => {
   return (
     <div className="h-full flex flex-col lg:flex-row overflow-hidden bg-cyber-black relative">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col p-4 lg:p-8 pb-24 lg:pb-8 min-h-0">
+      <div className="flex-1 flex flex-col p-3 sm:p-4 lg:p-8 pb-28 sm:pb-32 lg:pb-8 min-h-0">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 shrink-0 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 shrink-0 gap-2 sm:gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-orbitron font-black tracking-tighter flex items-center gap-3">
-              <ShoppingBag className="text-cyber-purple" />
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-orbitron font-black tracking-tighter flex items-center gap-2 sm:gap-3">
+              <ShoppingBag size={20} className="text-cyber-purple sm:hidden" />
+              <ShoppingBag size={24} className="text-cyber-purple hidden sm:block" />
               MARKET_HUB
             </h1>
-            <p className="text-xs text-gray-500 uppercase tracking-[0.4em]">Tactical Equipment Exchange</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-[0.3em] sm:tracking-[0.4em]">Tactical Equipment Exchange</p>
           </div>
 
           {/* Category Tabs */}
-          <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 self-start lg:self-auto overflow-x-auto max-w-full">
+          <div className="flex bg-white/5 p-1 rounded-lg sm:rounded-xl border border-white/10 self-start lg:self-auto overflow-x-auto max-w-full">
             {categories.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => { setActiveCategory(cat.id); setSelectedItem(null); }}
                 className={`
-                  px-4 py-2 rounded-lg text-xs font-bold font-orbitron uppercase transition-all whitespace-nowrap
-                  flex items-center gap-2
+                  px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-md sm:rounded-lg text-[10px] sm:text-xs font-bold font-orbitron uppercase transition-all whitespace-nowrap
+                  flex items-center gap-1 sm:gap-2
                   ${activeCategory === cat.id 
                     ? 'bg-white text-black shadow-lg shadow-white/10' 
                     : 'text-gray-500 hover:text-white'}
@@ -454,7 +455,7 @@ const ShopScreen: React.FC = () => {
 
         {/* Items Grid */}
         <div className="flex-1 overflow-y-auto no-scrollbar">
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {currentItems.map((item) => renderItemCard(item as WeaponSkin | BaseSkin | BoostItem))}
           </div>
         </div>
