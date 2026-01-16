@@ -1,6 +1,6 @@
 import React from 'react';
 import { Screen } from '../../types';
-import { ShoppingCart, User, Swords, Zap, Pentagon, LayoutGrid } from 'lucide-react';
+import { ShoppingCart, User, Swords, Zap, Pentagon, LayoutGrid, Target } from 'lucide-react';
 
 interface NavigationProps {
   currentScreen: Screen;
@@ -10,6 +10,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ currentScreen, onNavigate }) => {
   const navItems = [
     { id: Screen.HOME, label: 'Control', icon: LayoutGrid },
+    { id: Screen.MISSIONS, label: 'Missions', icon: Target },
     { id: Screen.GUARDIAN, label: 'Construct', icon: User },
     { id: Screen.SKILLS, label: 'Neural', icon: Pentagon },
     { id: Screen.SHOP, label: 'Supply', icon: ShoppingCart },

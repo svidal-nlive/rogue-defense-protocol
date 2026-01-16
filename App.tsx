@@ -9,6 +9,7 @@ import SkillScreen from './components/Screens/SkillScreen';
 import ShopScreen from './components/Screens/ShopScreen';
 import BattleScreen from './components/Screens/BattleScreen';
 import BattleSummary from './components/Screens/BattleSummary';
+import MissionsScreen from './components/Screens/MissionsScreen';
 
 const AppContent: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>(Screen.HOME);
@@ -47,6 +48,8 @@ const AppContent: React.FC = () => {
         return <SkillScreen />;
       case Screen.SHOP:
         return <ShopScreen />;
+      case Screen.MISSIONS:
+        return <MissionsScreen />;
       case Screen.BATTLE:
         return <BattleScreen onExit={handleBattleExit} />;
       default:

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Screen } from '../../types';
-import { ShoppingCart, User, Swords, Zap, Pentagon } from 'lucide-react';
+import { ShoppingCart, User, Swords, Zap, Pentagon, Target } from 'lucide-react';
 
 interface BottomNavProps {
   currentScreen: Screen;
@@ -12,6 +12,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate }) => {
     { id: Screen.SHOP, label: 'Shop', icon: ShoppingCart },
     { id: Screen.GUARDIAN, label: 'Guardian', icon: User },
     { id: Screen.HOME, label: 'Battle', icon: Swords, primary: true },
+    { id: Screen.MISSIONS, label: 'Missions', icon: Target },
     { id: Screen.SKILLS, label: 'Skill', icon: Pentagon },
     { id: Screen.BATTLE, label: 'Sim', icon: Zap, hidden: true },
   ];

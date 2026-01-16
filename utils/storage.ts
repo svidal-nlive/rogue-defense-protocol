@@ -1,9 +1,10 @@
-import { GameState, WeaponType, ShopState, ChipState } from '../types';
+import { GameState, WeaponType, ShopState, ChipState, MissionState, AchievementState, ChipSlot } from '../types';
 import { INITIAL_STATS, SKILL_TREE } from '../constants';
-import { STARTER_CHIPS, INITIAL_CHIP_SLOTS } from '../constants/chips';
+import { getAvailableMissions, generateDailyMissions, generateWeeklyMissions } from '../constants/missions';
+import { initializeAchievements } from '../constants/achievements';
 
 const STORAGE_KEY = 'rogue-defense-protocol-save';
-const STORAGE_VERSION = 6;  // v6: Wave checkpoint system
+const STORAGE_VERSION = 7;  // v7: Mission & Achievement system
 
 interface StorageWrapper {
   version: number;
@@ -22,11 +23,63 @@ export const createInitialShopState = (): ShopState => ({
 });
 
 /**
- * Creates initial chip state with starter chips
+ * Creates initial chip state - empty for mission-based progression
  */
 export const createInitialChipState = (): ChipState => ({
-  ownedChips: [...STARTER_CHIPS],
-  slots: [...INITIAL_CHIP_SLOTS],
+  ownedChips: [],  // No starter chips - earn them through missions
+  slots: Array(8).fill(null).map((_, i): ChipSlot => ({
+    index: i,
+    unlocked: false,  // All slots start locked
+    equippedChipId: null
+  })),
+  totalSlotsUnlocked: 0,
+});
+
+/**
+ * Creates initial mission state
+ */
+export const createInitialMissionState = (): MissionState => {
+  const now = Date.now();
+  const availableMissions = getAvailableMissions([], 1);
+  
+  return {
+    activeMissions: availableMissions,
+    completedMissions: [],
+    dailyMissions: generateDailyMissions(),
+    weeklyMissions: generateWeeklyMissions(),
+    dailyMissionsRefreshedAt: now,
+    weeklyMissionsRefreshedAt: now,
+    totalMissionsCompleted: 0,
+    // Tracking stats
+    totalEnemiesKilled: 0,
+    totalBossesKilled: 0,
+    totalDamageDealt: 0,
+    totalCriticalHits: 0,
+    totalGoldEarned: 0,
+    totalWavesCompleted: 0,
+    totalBattlesCompleted: 0,
+    highestWaveReached: 0,
+    weaponsUsed: [],
+    // Per-enemy-type tracking
+    circlesKilled: 0,
+    squaresKilled: 0,
+    trianglesKilled: 0,
+    swarmsKilled: 0,
+    tanksKilled: 0,
+    // Per-battle tracking
+    currentBattleBossKills: 0,
+    currentBattleKillStreak: 0,
+    currentBattleMaxKillStreak: 0,
+    lastKillTime: 0,
+  };
+};
+
+/**
+ * Creates initial achievement state
+ */
+export const createInitialAchievementState = (): AchievementState => ({
+  progress: initializeAchievements(),
+  totalUnlocked: 0,
 });
 
 /**
@@ -58,10 +111,12 @@ export const createInitialGameState = (): GameState => ({
   totalBattlesWon: 0,
   highScore: 0,
   skillNodes: SKILL_TREE.map(node => ({ ...node, currentLevel: 0 })), // Reset all skills
-  chipState: createInitialChipState(),       // Chip system state
+  chipState: createInitialChipState(),       // Chip system state - empty until missions grant them
   equippedWeapon: WeaponType.BLASTER,        // Start with basic blaster
   unlockedWeapons: [WeaponType.BLASTER],     // Only blaster unlocked initially
   shop: createInitialShopState(),             // Shop state
+  missionState: createInitialMissionState(), // Mission system
+  achievementState: createInitialAchievementState(), // Achievement system
   lastPlayed: Date.now(),
   createdAt: Date.now(),
 });

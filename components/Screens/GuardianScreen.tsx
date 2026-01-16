@@ -84,9 +84,9 @@ const GuardianScreen: React.FC = () => {
 
   // Get chip in a specific slot
   const getChipInSlot = (slotIndex: number): OwnedChip | null => {
-    const instanceId = chipState.slots[slotIndex];
-    if (!instanceId) return null;
-    return chipState.ownedChips.find(c => c.instanceId === instanceId) || null;
+    const slot = chipState.slots[slotIndex];
+    if (!slot || !slot.equippedChipId) return null;
+    return chipState.ownedChips.find(c => c.instanceId === slot.equippedChipId) || null;
   };
 
   return (
