@@ -141,20 +141,37 @@ npm run preview      # Serve dist/ locally
 ### Overview
 The project uses GitHub Actions to build Docker images and deploy to a self-hosted server via Traefik reverse proxy.
 
+### ⚠️ CRITICAL: Commit All Files Before Deployment
+**Docker builds only include files that are committed to Git.** Uncommitted or untracked files will NOT be included in the deployed application.
+
+Before deploying, always verify:
+```bash
+git status                    # Check for uncommitted changes
+git add -A && git commit -m "message"  # Stage and commit all changes
+```
+
+The `deploy.sh` script now auto-stages files in these directories:
+- `components/`, `constants/`, `contexts/`, `hooks/`, `utils/`
+- `docs/`, `public/`, `tests/`, `.github/`
+- Root files: `*.ts`, `*.tsx`, `*.js`, `*.json`, `*.md`, `*.html`, `Dockerfile`, `docker-compose.yml`
+
+**Common Deployment Failure**: New feature files exist locally but aren't committed. The GitHub Actions build uses cache and appears successful, but the new code isn't included.
+
 ### Quick Deploy
 ```bash
 make deploy          # Full automated deployment (push → build → pull → redeploy)
 ```
 
 ### Deployment Flow
-1. **Push to main** → Triggers GitHub Actions workflow (`.github/workflows/docker-build.yml`)
-2. **Build** → Docker image built and pushed to `ghcr.io/svidal-nlive/rogue-defense-protocol:latest`
-3. **Pull** → Server pulls the new image from GitHub Container Registry
-4. **Redeploy** → Container restarted with new image, health check confirms success
+1. **Stage & Commit** → `deploy.sh` auto-stages/commits app files if uncommitted changes detected
+2. **Push to main** → Triggers GitHub Actions workflow (`.github/workflows/docker-build.yml`)
+3. **Build** → Docker image built and pushed to `ghcr.io/svidal-nlive/rogue-defense-protocol:latest`
+4. **Pull** → Server pulls the new image from GitHub Container Registry
+5. **Redeploy** → Container restarted with new image, health check confirms success
 
 ### Key Files
 - **[Makefile](Makefile)** - Deployment commands and container management
-- **[scripts/deploy.sh](scripts/deploy.sh)** - Automated deployment script with status reporting
+- **[scripts/deploy.sh](scripts/deploy.sh)** - Automated deployment script with auto-staging
 - **[docker-compose.yml](docker-compose.yml)** - Container configuration with Traefik labels
 - **[.github/workflows/docker-build.yml](.github/workflows/docker-build.yml)** - GitHub Actions workflow
 
@@ -181,6 +198,12 @@ make logs            # View container logs
 make workflow-logs   # View GitHub Actions logs
 make health          # Check health endpoint directly
 ```
+
+**If new features don't appear after deployment:**
+1. Check `git status` for uncommitted files
+2. Verify the commit SHA in the Docker image labels matches expected commit
+3. Check if GitHub Actions used cache (look for "CACHED" in build logs)
+4. Force a fresh build by modifying a file or clearing GitHub Actions cache
 
 ## Code Navigation (Table of Contents)
 
