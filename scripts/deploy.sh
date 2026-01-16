@@ -158,17 +158,209 @@ preflight_checks() {
     # Check for uncommitted changes
     if [[ -n $(git status --porcelain) ]]; then
         print_warning "Uncommitted changes detected"
-        if ! confirm "Continue anyway?"; then
-            exit 1
-        fi
+        UNCOMMITTED_CHANGES=true
     else
         print_success "Working directory clean"
+        UNCOMMITTED_CHANGES=false
     fi
 }
 
 # -----------------------------------------------------------------------------
 # Git Operations
 # -----------------------------------------------------------------------------
+
+# Directories containing app/game code that should be auto-staged
+APP_DIRECTORIES=(
+    "components"
+    "constants"
+    "contexts"
+    "hooks"
+    "utils"
+    "docs"
+    "public"
+    "tests"
+    ".github"
+)
+
+# File patterns to include at project root
+ROOT_FILE_PATTERNS=(
+    "*.ts"
+    "*.tsx"
+    "*.js"
+    "*.jsx"
+    "*.css"
+    "*.json"
+    "*.md"
+    "*.html"
+    "Dockerfile"
+    "docker-compose.yml"
+    ".gitignore"
+)
+
+stage_changes() {
+    print_header "Staging Changes"
+    
+    cd "$PROJECT_DIR"
+    
+    # Check if there are any changes to stage
+    if [[ "$UNCOMMITTED_CHANGES" != "true" ]]; then
+        print_info "No changes to stage"
+        return 0
+    fi
+    
+    local staged_count=0
+    local new_files=()
+    local modified_files=()
+    
+    # Get list of untracked and modified files
+    print_step "Scanning for changes in app directories..."
+    
+    # Stage files in app directories
+    for dir in "${APP_DIRECTORIES[@]}"; do
+        if [[ -d "$dir" ]]; then
+            # Get untracked files in this directory
+            while IFS= read -r file; do
+                if [[ -n "$file" ]]; then
+                    new_files+=("$file")
+                fi
+            done < <(git ls-files --others --exclude-standard "$dir" 2>/dev/null)
+            
+            # Get modified files in this directory
+            while IFS= read -r file; do
+                if [[ -n "$file" ]]; then
+                    modified_files+=("$file")
+                fi
+            done < <(git diff --name-only "$dir" 2>/dev/null)
+        fi
+    done
+    
+    # Get root-level files matching patterns
+    print_step "Scanning for changes in root files..."
+    for pattern in "${ROOT_FILE_PATTERNS[@]}"; do
+        while IFS= read -r file; do
+            if [[ -n "$file" && -f "$file" ]]; then
+                # Check if it's untracked
+                if git ls-files --others --exclude-standard "$file" 2>/dev/null | grep -q .; then
+                    new_files+=("$file")
+                # Check if it's modified
+                elif git diff --name-only "$file" 2>/dev/null | grep -q .; then
+                    modified_files+=("$file")
+                fi
+            fi
+        done < <(ls -1 $pattern 2>/dev/null)
+    done
+    
+    # Display what we found
+    if [[ ${#new_files[@]} -gt 0 ]]; then
+        print_info "New files to stage: ${#new_files[@]}"
+        for file in "${new_files[@]:0:10}"; do
+            echo -e "    ${GREEN}+${NC} $file"
+        done
+        if [[ ${#new_files[@]} -gt 10 ]]; then
+            echo -e "    ${CYAN}... and $((${#new_files[@]} - 10)) more${NC}"
+        fi
+    fi
+    
+    if [[ ${#modified_files[@]} -gt 0 ]]; then
+        print_info "Modified files to stage: ${#modified_files[@]}"
+        for file in "${modified_files[@]:0:10}"; do
+            echo -e "    ${YELLOW}~${NC} $file"
+        done
+        if [[ ${#modified_files[@]} -gt 10 ]]; then
+            echo -e "    ${CYAN}... and $((${#modified_files[@]} - 10)) more${NC}"
+        fi
+    fi
+    
+    # If nothing found, check for any other changes
+    local total_changes=$((${#new_files[@]} + ${#modified_files[@]}))
+    if [[ $total_changes -eq 0 ]]; then
+        # Maybe there are staged changes already
+        local already_staged=$(git diff --cached --name-only | wc -l)
+        if [[ $already_staged -gt 0 ]]; then
+            print_info "$already_staged files already staged"
+            return 0
+        fi
+        
+        print_warning "No relevant app files found to stage"
+        print_info "Checking for any other changes..."
+        git status --short
+        
+        if ! confirm "Stage all changes anyway?"; then
+            return 1
+        fi
+        git add -A
+        print_success "All changes staged"
+        return 0
+    fi
+    
+    # Confirm staging
+    if ! confirm "Stage ${total_changes} file(s)?"; then
+        print_warning "Skipping staging"
+        return 1
+    fi
+    
+    # Stage the files
+    print_step "Staging files..."
+    
+    # Stage app directories (recursively)
+    for dir in "${APP_DIRECTORIES[@]}"; do
+        if [[ -d "$dir" ]]; then
+            git add "$dir" 2>/dev/null || true
+        fi
+    done
+    
+    # Stage root-level files
+    for pattern in "${ROOT_FILE_PATTERNS[@]}"; do
+        git add $pattern 2>/dev/null || true
+    done
+    
+    # Count what was staged
+    staged_count=$(git diff --cached --name-only | wc -l)
+    print_success "Staged $staged_count file(s)"
+    
+    CHANGES_STAGED=true
+}
+
+commit_changes() {
+    print_header "Committing Changes"
+    
+    cd "$PROJECT_DIR"
+    
+    # Check if there's anything to commit
+    local staged=$(git diff --cached --name-only | wc -l)
+    if [[ $staged -eq 0 ]]; then
+        print_info "Nothing to commit"
+        CHANGES_COMMITTED=false
+        return 0
+    fi
+    
+    # Show staged files summary
+    print_info "Files to commit: $staged"
+    
+    # Generate commit message
+    local default_msg="chore: deploy updates [$(date '+%Y-%m-%d %H:%M:%S')]"
+    local commit_msg=""
+    
+    if [[ "$AUTO_CONFIRM" == "true" ]]; then
+        commit_msg="$default_msg"
+    else
+        echo -e "  ${CYAN}Default:${NC} $default_msg"
+        read -p "  Commit message (Enter for default): " commit_msg
+        if [[ -z "$commit_msg" ]]; then
+            commit_msg="$default_msg"
+        fi
+    fi
+    
+    # Commit
+    if git commit -m "$commit_msg" 2>&1 | while read line; do echo "  $line"; done; then
+        COMMIT_SHA=$(git rev-parse --short HEAD)
+        print_success "Committed as ${BOLD}$COMMIT_SHA${NC}"
+        CHANGES_COMMITTED=true
+    else
+        print_error "Failed to commit"
+        return 1
+    fi
+}
 
 push_changes() {
     print_header "Pushing to Remote"
@@ -188,6 +380,7 @@ push_changes() {
         # Option to force a workflow run with empty commit
         if confirm "Create empty commit to trigger build?"; then
             git commit --allow-empty -m "chore: trigger deployment [$(date '+%Y-%m-%d %H:%M:%S')]"
+            COMMIT_SHA=$(git rev-parse --short HEAD)
             print_success "Empty commit created"
         else
             # Use most recent commit SHA for workflow lookup
@@ -419,6 +612,8 @@ generate_report() {
     report+="  Repository:        ${REPO}\n"
     report+="  Commit:            ${COMMIT_SHA:-N/A}\n"
     report+="  Branch:            $(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo 'N/A')\n"
+    report+="  Changes Staged:    ${CHANGES_STAGED:-false}\n"
+    report+="  Changes Committed: ${CHANGES_COMMITTED:-false}\n"
     report+="\n"
     report+="╠══════════════════════════════════════════════════════════════╣\n"
     report+="║ GITHUB ACTIONS                                               ║\n"
@@ -468,6 +663,13 @@ main() {
     print_info "Starting automated deployment at $(date '+%Y-%m-%d %H:%M:%S')"
     
     preflight_checks
+    
+    # Handle uncommitted changes - stage and commit
+    if [[ "$UNCOMMITTED_CHANGES" == "true" ]]; then
+        stage_changes
+        commit_changes
+    fi
+    
     push_changes
     wait_for_workflow
     verify_image
