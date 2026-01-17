@@ -11,7 +11,7 @@ import {
   getEnemyDefinition 
 } from '../../constants/enemies';
 import { useResponsive, useTapGesture, useSwipeGesture, TapEvent, SwipeGesture } from '../../hooks/useResponsive';
-import { Pause, Play, FastForward, XCircle, Shield, Zap, Target, RefreshCw, Coins, Flame, ChevronUp } from 'lucide-react';
+import { Pause, Play, FastForward, XCircle, Shield, Zap, Target, RefreshCw, Coins, Flame, ChevronUp, Radio } from 'lucide-react';
 import { WEAPON_SKINS, BASE_SKINS, BOOST_ITEMS } from '../../constants/shopItems';
 
 interface BattleScreenProps {
@@ -102,6 +102,15 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   const [screenShake, setScreenShake] = useState(false);
   const [targetedEnemy, setTargetedEnemy] = useState<string | null>(null);
   
+  // Manual aim mode state
+  const [aimMode, setAimMode] = useState<'AUTO' | 'MANUAL'>('MANUAL');
+  const [aimPosition, setAimPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isAiming, setIsAiming] = useState(false);
+  const [ammo, setAmmo] = useState(30);
+  const maxAmmo = 30;
+  const [isReloading, setIsReloading] = useState(false);
+  const [reloadProgress, setReloadProgress] = useState(0);
+  
   // Use a ref to track game over state for the game loop (avoids effect re-runs)
   const gameOverRef = useRef(false);
   
@@ -144,6 +153,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     nebulaClouds: [] as {x: number, y: number, radius: number, color: string, alpha: number}[],
     turretAngle: 0,
     starsInitialized: false,
+    // Manual aim tracking
+    reloadStartTime: 0,
   });
 
   // Initialize battle
@@ -202,6 +213,29 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     
     return () => clearInterval(interval);
   }, [paused, gameOver]);
+
+  // Reload effect
+  useEffect(() => {
+    if (!isReloading || paused || gameOver) return;
+    
+    const RELOAD_TIME = 1500; // 1.5 seconds to reload
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - gameStateRef.current.reloadStartTime;
+      const progress = Math.min(100, (elapsed / RELOAD_TIME) * 100);
+      
+      setReloadProgress(progress);
+      
+      if (elapsed >= RELOAD_TIME) {
+        setAmmo(maxAmmo);
+        setIsReloading(false);
+        setReloadProgress(0);
+        clearInterval(interval);
+      }
+    }, 50);
+    
+    return () => clearInterval(interval);
+  }, [isReloading, paused, gameOver, maxAmmo]);
 
   // Spawn enemy with wave scaling - using centralized definitions
   const spawnEnemy = useCallback((canvasWidth: number, canvasHeight: number) => {
@@ -332,7 +366,91 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     }));
   }, [paused, gameOver, stats.damage, createExplosion, createDamageNumber]);
 
-  // Keyboard handler for abilities
+  // Reload weapon
+  const startReload = useCallback(() => {
+    if (isReloading || ammo === maxAmmo) return;
+    setIsReloading(true);
+    setReloadProgress(0);
+    gameStateRef.current.reloadStartTime = Date.now();
+  }, [isReloading, ammo, maxAmmo]);
+
+  // Fire projectile at target position
+  const fireProjectileAt = useCallback((targetX: number, targetY: number) => {
+    if (ammo <= 0 || isReloading) {
+      startReload();
+      return;
+    }
+    
+    const gState = gameStateRef.current;
+    const bx = gState.basePosition.x;
+    const by = gState.basePosition.y;
+    
+    const dx = targetX - bx;
+    const dy = targetY - by;
+    const angle = Math.atan2(dy, dx);
+    const projSpeed = 0.8 * currentWeapon.projectileSpeed * boostEffects.speedMultiplier;
+    
+    const boostedDamage = stats.damage * currentWeapon.damageMultiplier * boostEffects.damageMultiplier;
+    
+    gState.projectiles.push({
+      id: Math.random().toString(),
+      x: bx,
+      y: by - 40,
+      vx: Math.cos(angle) * projSpeed,
+      vy: Math.sin(angle) * projSpeed,
+      damage: boostedDamage,
+      color: equippedWeaponSkin?.projectileColor || currentWeapon.projectileColor,
+      weaponType: equippedWeapon,
+      trail: [],
+      splashRadius: currentWeapon.splashRadius,
+      slowPercent: currentWeapon.slowPercent,
+      slowDuration: currentWeapon.slowDuration,
+      piercing: currentWeapon.piercing,
+      hitEnemies: [],
+      trailColor: equippedWeaponSkin?.trailColor || currentWeapon.projectileColor,
+      trailStyle: equippedWeaponSkin?.trailStyle || 'normal',
+      particleEffect: equippedWeaponSkin?.particleEffect,
+    });
+    
+    triggerScreenShake();
+    setAmmo(prev => prev - 1);
+  }, [ammo, isReloading, stats.damage, currentWeapon, boostEffects, equippedWeaponSkin, triggerScreenShake, startReload]);
+
+  // Handle pointer move for aiming
+  const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (aimMode !== 'MANUAL' || paused || gameOver) return;
+    
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    setAimPosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+    setIsAiming(true);
+  }, [aimMode, paused, gameOver]);
+
+  // Handle pointer down for firing
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (aimMode !== 'MANUAL' || paused || gameOver) return;
+    
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const rect = container.getBoundingClientRect();
+    const targetX = e.clientX - rect.left;
+    const targetY = e.clientY - rect.top;
+    
+    fireProjectileAt(targetX, targetY);
+  }, [aimMode, paused, gameOver, fireProjectileAt]);
+
+  // Handle pointer leave
+  const handlePointerLeave = useCallback(() => {
+    setIsAiming(false);
+  }, []);
+
+  // Keyboard handler for abilities and reload
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (paused || gameOver) return;
@@ -347,12 +465,17 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
         case 'e':
           activateAbility('overclock');
           break;
+        case 'r':
+          if (aimMode === 'MANUAL') {
+            startReload();
+          }
+          break;
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activateAbility, paused, gameOver]);
+  }, [activateAbility, paused, gameOver, aimMode, startReload]);
 
   // Initialize game state on mount only (separate from game loop to prevent re-initialization)
   useEffect(() => {
@@ -424,56 +547,68 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       const attackSpeedMultiplier = (gState.overclockActive ? 2 : 1) * currentWeapon.attackSpeedMultiplier;
       const fireInterval = 1000 / ((stats.attackSpeed || 1) * attackSpeedMultiplier);
       
-      if (gState.fireTimer >= fireInterval) {
-        let closestDist = Infinity;
-        let target: Enemy | null = null;
-
-        gState.enemies.forEach(enemy => {
-          const dx = enemy.x - gState.basePosition.x;
-          const dy = enemy.y - gState.basePosition.y;
-          const dist = Math.sqrt(dx*dx + dy*dy);
-          if (dist < closestDist) {
-            closestDist = dist;
-            target = enemy;
+      if (aimMode === 'MANUAL') {
+        // Manual aim mode: only update turret angle, don't auto-fire
+        if (isAiming && aimPosition) {
+          const dx = aimPosition.x - gState.basePosition.x;
+          const dy = aimPosition.y - gState.basePosition.y;
+          if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+            gState.turretAngle = Math.atan2(dy, dx);
           }
-        });
+        }
+      } else {
+        // AUTO aim mode: existing logic
+        if (gState.fireTimer >= fireInterval) {
+          let closestDist = Infinity;
+          let target: Enemy | null = null;
 
-        if (target && closestDist < 800) {
-          const projSpeed = 0.8 * currentWeapon.projectileSpeed * boostEffects.speedMultiplier;
-          const dx = (target as Enemy).x - gState.basePosition.x;
-          const dy = (target as Enemy).y - gState.basePosition.y;
-          const angle = Math.atan2(dy, dx);
-          
-          // Use skin colors if available, otherwise weapon defaults
-          const projColor = equippedWeaponSkin?.projectileColor || currentWeapon.projectileColor;
-          const trailColor = equippedWeaponSkin?.trailColor || currentWeapon.projectileColor;
-          const trailStyle = equippedWeaponSkin?.trailStyle || 'normal';
-          const particleEffect = equippedWeaponSkin?.particleEffect;
-          
-          // Apply damage boost
-          const boostedDamage = stats.damage * currentWeapon.damageMultiplier * boostEffects.damageMultiplier;
-          
-          gState.projectiles.push({
-            id: Math.random().toString(),
-            x: gState.basePosition.x,
-            y: gState.basePosition.y - 40,
-            vx: Math.cos(angle) * projSpeed,
-            vy: Math.sin(angle) * projSpeed,
-            damage: boostedDamage,
-            color: projColor,
-            weaponType: equippedWeapon,
-            targetId: (target as Enemy).id,
-            trail: [],
-            splashRadius: currentWeapon.splashRadius,
-            slowPercent: currentWeapon.slowPercent,
-            slowDuration: currentWeapon.slowDuration,
-            piercing: currentWeapon.piercing,
-            hitEnemies: [],
-            trailColor: trailColor,
-            trailStyle: trailStyle,
-            particleEffect: particleEffect,
+          gState.enemies.forEach(enemy => {
+            const dx = enemy.x - gState.basePosition.x;
+            const dy = enemy.y - gState.basePosition.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < closestDist) {
+              closestDist = dist;
+              target = enemy;
+            }
           });
-          gState.fireTimer = 0;
+
+          if (target && closestDist < 800) {
+            const projSpeed = 0.8 * currentWeapon.projectileSpeed * boostEffects.speedMultiplier;
+            const dx = (target as Enemy).x - gState.basePosition.x;
+            const dy = (target as Enemy).y - gState.basePosition.y;
+            const angle = Math.atan2(dy, dx);
+            
+            // Use skin colors if available, otherwise weapon defaults
+            const projColor = equippedWeaponSkin?.projectileColor || currentWeapon.projectileColor;
+            const trailColor = equippedWeaponSkin?.trailColor || currentWeapon.projectileColor;
+            const trailStyle = equippedWeaponSkin?.trailStyle || 'normal';
+            const particleEffect = equippedWeaponSkin?.particleEffect;
+            
+            // Apply damage boost
+            const boostedDamage = stats.damage * currentWeapon.damageMultiplier * boostEffects.damageMultiplier;
+            
+            gState.projectiles.push({
+              id: Math.random().toString(),
+              x: gState.basePosition.x,
+              y: gState.basePosition.y - 40,
+              vx: Math.cos(angle) * projSpeed,
+              vy: Math.sin(angle) * projSpeed,
+              damage: boostedDamage,
+              color: projColor,
+              weaponType: equippedWeapon,
+              targetId: (target as Enemy).id,
+              trail: [],
+              splashRadius: currentWeapon.splashRadius,
+              slowPercent: currentWeapon.slowPercent,
+              slowDuration: currentWeapon.slowDuration,
+              piercing: currentWeapon.piercing,
+              hitEnemies: [],
+              trailColor: trailColor,
+              trailStyle: trailStyle,
+              particleEffect: particleEffect,
+            });
+            gState.fireTimer = 0;
+          }
         }
       }
 
@@ -1725,6 +1860,51 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
         ctx.globalAlpha = 1;
       }
 
+      // --- DRAW AIM CROSSHAIR (Manual Mode) ---
+      if (aimMode === 'MANUAL' && isAiming) {
+        ctx.strokeStyle = '#00F0FF';
+        ctx.lineWidth = 2;
+        ctx.globalAlpha = 0.8;
+        
+        const cx = aimPosition.x;
+        const cy = aimPosition.y;
+        const size = 15;
+        
+        // Crosshair lines
+        ctx.beginPath();
+        ctx.moveTo(cx - size, cy);
+        ctx.lineTo(cx - size/3, cy);
+        ctx.moveTo(cx + size/3, cy);
+        ctx.lineTo(cx + size, cy);
+        ctx.moveTo(cx, cy - size);
+        ctx.lineTo(cx, cy - size/3);
+        ctx.moveTo(cx, cy + size/3);
+        ctx.lineTo(cx, cy + size);
+        ctx.stroke();
+        
+        // Outer circle
+        ctx.beginPath();
+        ctx.arc(cx, cy, size, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Highlight nearest enemy in range
+        const nearestInRange = gState.enemies.find(e => {
+          const dist = Math.sqrt(Math.pow(e.x - cx, 2) + Math.pow(e.y - cy, 2));
+          return dist < e.radius + 30;
+        });
+        
+        if (nearestInRange) {
+          ctx.strokeStyle = '#FF003C';
+          ctx.lineWidth = 3;
+          ctx.globalAlpha = 1;
+          ctx.beginPath();
+          ctx.arc(nearestInRange.x, nearestInRange.y, nearestInRange.radius + 10, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        
+        ctx.globalAlpha = 1;
+      }
+
       frameId = requestAnimationFrame(loop);
     };
 
@@ -1745,7 +1925,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       cancelAnimationFrame(frameId);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused, stats, wave, spawnEnemy, createExplosion, createDamageNumber, killEnemy, boostEffects, equippedWeaponSkin, equippedBaseSkin]);
+  }, [paused, stats, wave, spawnEnemy, createExplosion, createDamageNumber, killEnemy, boostEffects, equippedWeaponSkin, equippedBaseSkin, aimMode, isAiming, aimPosition]);
 
   // Handle tap to target enemy
   const handleCanvasTap = useCallback((tap: TapEvent) => {
@@ -1936,6 +2116,9 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           minHeight: isMobile && isPortrait ? '60vh' : 'auto',
           touchAction: 'none',
         }}
+        onPointerMove={handlePointerMove}
+        onPointerDown={handlePointerDown}
+        onPointerLeave={handlePointerLeave}
       >
         <canvas 
           ref={canvasRef} 
@@ -2020,6 +2203,54 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             </div>
           </div>
 
+          <div className="bg-white/5 rounded-xl p-4 space-y-3 border border-white/5">
+            <div>
+              <h3 className="text-[10px] uppercase text-gray-500 font-bold mb-2">Targeting System</h3>
+              <button
+                onClick={() => setAimMode(prev => prev === 'AUTO' ? 'MANUAL' : 'AUTO')}
+                className={`w-full h-10 rounded-lg border flex items-center justify-center gap-2 transition-all font-orbitron text-xs ${
+                  aimMode === 'MANUAL' 
+                    ? 'bg-cyber-blue text-black border-cyber-blue font-bold' 
+                    : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'
+                }`}
+              >
+                <Target size={14} />
+                <span>{aimMode === 'MANUAL' ? 'MANUAL AIM' : 'AUTO AIM'}</span>
+              </button>
+            </div>
+
+            {aimMode === 'MANUAL' && (
+              <div className="pt-2 border-t border-white/5">
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[9px] text-gray-500 font-orbitron">AMMO</span>
+                  <span className={`text-sm font-bold font-mono ${isReloading ? 'text-cyber-yellow animate-pulse' : 'text-white'}`}>
+                    {isReloading ? 'RELOADING' : `${ammo}/${maxAmmo}`}
+                  </span>
+                </div>
+                {isReloading ? (
+                  <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-cyber-blue transition-all duration-100"
+                      style={{ width: `${reloadProgress}%` }}
+                    />
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => startReload()}
+                    disabled={ammo === maxAmmo}
+                    className={`w-full h-8 rounded-lg border text-xs font-orbitron transition-all ${
+                      ammo === maxAmmo
+                        ? 'bg-gray-900 border-gray-700 text-gray-600 cursor-not-allowed'
+                        : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                    }`}
+                  >
+                    RELOAD (R)
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+
           <div className="flex-1" />
 
           <div className="space-y-3">
@@ -2062,8 +2293,42 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             {abilities.map(ability => renderAbilityButton(ability, 'mobile'))}
           </div>
           
+          {/* Ammo display (Manual mode only) */}
+          {aimMode === 'MANUAL' && (
+            <div className="px-4 pb-2">
+              <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-[8px] text-gray-500 font-orbitron mb-0.5">AMMO</div>
+                  <div className={`text-sm font-bold font-mono ${isReloading ? 'text-cyber-yellow animate-pulse' : 'text-white'}`}>
+                    {isReloading ? 'RELOAD' : `${ammo}/${maxAmmo}`}
+                  </div>
+                </div>
+                {isReloading && (
+                  <div className="w-16 h-1.5 bg-gray-800 rounded-full overflow-hidden ml-2">
+                    <div 
+                      className="h-full bg-cyber-blue transition-all duration-100"
+                      style={{ width: `${reloadProgress}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
           {/* Control buttons row */}
           <div className="px-4 pb-3 flex justify-center gap-3">
+            <button 
+              onClick={() => setAimMode(prev => prev === 'AUTO' ? 'MANUAL' : 'AUTO')}
+              className={`w-14 h-12 rounded-xl border flex items-center justify-center active:scale-95 transition-transform touch-manipulation ${
+                aimMode === 'MANUAL' 
+                  ? 'bg-cyber-blue text-black border-cyber-blue' 
+                  : 'bg-white/5 border-white/10 text-white'
+              }`}
+              title={aimMode === 'MANUAL' ? 'MANUAL AIM' : 'AUTO AIM'}
+            >
+              <Target size={20} />
+            </button>
+
             <button 
               onClick={() => setPaused(!paused)}
               className="w-14 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center active:scale-95 transition-transform touch-manipulation"
