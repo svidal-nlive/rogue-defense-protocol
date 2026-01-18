@@ -123,9 +123,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   
   // Ability state
   const [abilities, setAbilities] = useState<Ability[]>([
-    { id: 'plasma_burst', name: 'Plasma Burst', hotkey: 'Q', cooldown: 10000, currentCooldown: 0, duration: 0, activeUntil: 0, icon: <Flame size={22} />, color: 'text-orange-500' },
-    { id: 'shield', name: 'Shield', hotkey: 'W', cooldown: 15000, currentCooldown: 0, duration: 5000, activeUntil: 0, icon: <Shield size={22} />, color: 'text-cyber-blue' },
-    { id: 'overclock', name: 'Overclock', hotkey: 'E', cooldown: 20000, currentCooldown: 0, duration: 8000, activeUntil: 0, icon: <Zap size={22} />, color: 'text-cyber-yellow' },
+    { id: 'plasma_burst', name: 'Plasma Burst', hotkey: 'Q', cooldown: 5000, currentCooldown: 0, duration: 0, activeUntil: 0, icon: <Flame size={22} />, color: 'text-orange-500' },
+    { id: 'shield', name: 'Shield', hotkey: 'W', cooldown: 8000, currentCooldown: 0, duration: 5000, activeUntil: 0, icon: <Shield size={22} />, color: 'text-cyber-blue' },
+    { id: 'overclock', name: 'Overclock', hotkey: 'E', cooldown: 12000, currentCooldown: 0, duration: 8000, activeUntil: 0, icon: <Zap size={22} />, color: 'text-cyber-yellow' },
+    { id: 'emp_pulse', name: 'EMP Pulse', hotkey: 'R', cooldown: 6000, currentCooldown: 0, duration: 0, activeUntil: 0, icon: <Zap size={22} />, color: 'text-cyan-400' },
+    { id: 'repair_drone', name: 'Repair', hotkey: 'F', cooldown: 15000, currentCooldown: 0, duration: 0, activeUntil: 0, icon: <Shield size={22} />, color: 'text-green-500' },
   ]);
   
   // Display state (from context)
@@ -159,6 +161,9 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     starsInitialized: false,
     // Manual aim tracking
     reloadStartTime: 0,
+    // Priority targets & stun tracking
+    priorityTarget: null as {x: number, y: number, spawnTime: number} | null,
+    enemyStunMap: new Map<any, number>(), // Map of enemy to stun end time
   });
 
   // Initialize battle
@@ -360,6 +365,41 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
         case 'overclock':
           gState.overclockActive = true;
           break;
+
+        case 'emp_pulse':
+          // Stun all enemies for 2 seconds (2000ms)
+          const stunDuration = 2000;
+          const empRadius = 300;
+          gState.enemies.forEach(enemy => {
+            const dx = enemy.x - gState.basePosition.x;
+            const dy = enemy.y - gState.basePosition.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < empRadius) {
+              // Set stun end time for this enemy
+              gState.enemyStunMap.set(enemy, now + stunDuration);
+              createExplosion(enemy.x, enemy.y, '#00FFFF', 4);
+              // Create electric arc effect
+              createDamageNumber(enemy.x, enemy.y, 0, false); // Show "STUNNED" as damage number
+            }
+          });
+          // Create EMP shockwave visual
+          gState.shockwaves.push({
+            x: gState.basePosition.x,
+            y: gState.basePosition.y,
+            radius: 0,
+            maxRadius: empRadius,
+            color: '#00FFFF',
+            life: 1.0
+          });
+          break;
+
+        case 'repair_drone':
+          // Restore 300 HP
+          const repairAmount = 300;
+          gState.hp = Math.min(gState.hp + repairAmount, 3000);
+          createExplosion(gState.basePosition.x, gState.basePosition.y, '#00FF00', 3);
+          createDamageNumber(gState.basePosition.x, gState.basePosition.y - 50, repairAmount, false);
+          break;
       }
       
       return {
@@ -483,16 +523,17 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           activateAbility('overclock');
           break;
         case 'r':
-          if (aimMode === 'MANUAL') {
-            startReload();
-          }
+          activateAbility('emp_pulse');
+          break;
+        case 'f':
+          activateAbility('repair_drone');
           break;
       }
     };
     
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activateAbility, paused, gameOver, aimMode, startReload]);
+  }, [activateAbility, paused, gameOver]);
 
   // Initialize game state on mount only (separate from game loop to prevent re-initialization)
   useEffect(() => {
@@ -537,6 +578,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       }
       
       const delta = Math.min(rawDelta, 50) * speedMultiplierRef.current;
+      const now = Date.now();
       const gState = gameStateRef.current;
       const currentWaveConfig = getWaveConfig(wave);
 
@@ -556,6 +598,18 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       if (gState.spawnTimer > currentWaveConfig.spawnInterval) {
         spawnEnemy(canvas.width, canvas.height);
         gState.spawnTimer = 0;
+      }
+
+      // --- PRIORITY TARGET SPAWNING ---
+      // 20% chance to spawn a priority target every 8 seconds
+      if (!gState.priorityTarget && Math.random() < 0.2) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 400;
+        gState.priorityTarget = {
+          x: gState.basePosition.x + Math.cos(angle) * distance,
+          y: gState.basePosition.y + Math.sin(angle) * distance,
+          spawnTime: Date.now()
+        };
       }
 
       // --- FIRING ---
@@ -640,7 +694,6 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       }
 
       // --- UPDATE ENEMIES ---
-      const now = Date.now();
       for (let i = gState.enemies.length - 1; i >= 0; i--) {
         const enemy = gState.enemies[i];
         
@@ -648,17 +701,27 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
         const dy = gState.basePosition.y - enemy.y;
         const dist = Math.sqrt(dx*dx + dy*dy);
         
-        // Calculate speed with slow effect
-        let currentSpeed = enemy.baseSpeed || enemy.speed;
-        if (enemy.slowedUntil && now < enemy.slowedUntil && enemy.slowPercent) {
-          currentSpeed *= (1 - enemy.slowPercent / 100);
-        } else if (enemy.slowedUntil && now >= enemy.slowedUntil) {
-          // Clear slow effect
-          enemy.slowedUntil = 0;
-          enemy.slowPercent = 0;
+        // Check if enemy is stunned
+        const isStunned = gState.enemyStunMap.has(enemy) && now < (gState.enemyStunMap.get(enemy) || 0);
+        if (isStunned && now >= (gState.enemyStunMap.get(enemy) || 0)) {
+          gState.enemyStunMap.delete(enemy);
         }
         
-        if (dist > 1) {
+        // Calculate speed with slow effect (stun prevents movement)
+        let currentSpeed = enemy.baseSpeed || enemy.speed;
+        if (!isStunned) {
+          if (enemy.slowedUntil && now < enemy.slowedUntil && enemy.slowPercent) {
+            currentSpeed *= (1 - enemy.slowPercent / 100);
+          } else if (enemy.slowedUntil && now >= enemy.slowedUntil) {
+            // Clear slow effect
+            enemy.slowedUntil = 0;
+            enemy.slowPercent = 0;
+          }
+        } else {
+          currentSpeed = 0; // Stunned = no movement
+        }
+        
+        if (dist > 1 && !isStunned) {
           enemy.x += (dx / dist) * currentSpeed * delta;
           enemy.y += (dy / dist) * currentSpeed * delta;
         }
@@ -796,6 +859,21 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             // Check if primary target is dead
             if (enemy.hp <= 0) {
               createExplosion(enemy.x, enemy.y, enemy.color, 15);
+              
+              // Check if this was a priority target kill (bonus reward opportunity)
+              if (gState.priorityTarget) {
+                const distToPriority = Math.sqrt(
+                  Math.pow(enemy.x - gState.priorityTarget.x, 2) +
+                  Math.pow(enemy.y - gState.priorityTarget.y, 2)
+                );
+                const timeSincePrioritySpawn = now - gState.priorityTarget.spawnTime;
+                
+                // If killed the priority target within 6 seconds, clear it
+                if (distToPriority < 50 && timeSincePrioritySpawn < 6000) {
+                  gState.priorityTarget = null;
+                }
+              }
+              
               killEnemy(enemy.type, isCrit, dmg);
               gState.enemies.splice(j, 1);
             }
@@ -1737,6 +1815,50 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
 
         ctx.restore();
       });
+
+      // --- DRAW PRIORITY TARGET ---
+      if (gState.priorityTarget) {
+        const pt = gState.priorityTarget;
+        const timeSincePriority = now - pt.spawnTime;
+        const isExpiring = timeSincePriority > 6000 - 1000; // Last 1 second
+        const pulse = Math.sin(timeSincePriority * 0.01) * 0.5 + 0.5;
+        
+        // Pulsing ring around priority target location
+        ctx.strokeStyle = isExpiring ? '#FF003C' : '#00FF00';
+        ctx.lineWidth = isExpiring ? 4 : 3;
+        ctx.globalAlpha = isExpiring ? 0.5 + pulse * 0.5 : 0.7;
+        
+        // Inner circle
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 30, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Outer circle
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 50, 0, Math.PI * 2);
+        ctx.stroke();
+        
+        // Diamond shape marker
+        ctx.fillStyle = isExpiring ? '#FF003C80' : '#00FF0080';
+        const diamondSize = 20;
+        ctx.beginPath();
+        ctx.moveTo(pt.x, pt.y - diamondSize);
+        ctx.lineTo(pt.x + diamondSize, pt.y);
+        ctx.lineTo(pt.x, pt.y + diamondSize);
+        ctx.lineTo(pt.x - diamondSize, pt.y);
+        ctx.closePath();
+        ctx.fill();
+        
+        // Timer text
+        const timeRemaining = Math.max(0, (6000 - timeSincePriority) / 1000).toFixed(1);
+        ctx.fillStyle = isExpiring ? '#FF003C' : '#00FF00';
+        ctx.font = 'bold 14px Rajdhani';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(timeRemaining, pt.x, pt.y - 70);
+        
+        ctx.globalAlpha = 1;
+      }
 
       // --- DRAW PARTICLES (Enhanced) ---
       gState.particles.forEach(p => {
