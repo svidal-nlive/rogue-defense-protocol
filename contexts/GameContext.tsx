@@ -42,6 +42,55 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       // Start from checkpoint wave (10, 20, 30...) or wave 1 if no checkpoint
       const startWave = state.battle.waveCheckpoint > 0 ? state.battle.waveCheckpoint : 1;
       
+      // Generate random wave modifier (skip boss waves - every 5 waves)
+      const isBossWave = startWave % 5 === 0;
+      const shouldHaveModifier = !isBossWave && Math.random() < 0.7; // 70% chance for modifier
+      
+      let waveModifier = undefined;
+      if (shouldHaveModifier) {
+        // Simple modifier selection - will be fully imported at top of file
+        const modifierIds = ['fortified', 'swift', 'swarm', 'resilient', 'aggressive', 'regenerating', 'evasive'];
+        const randomId = modifierIds[Math.floor(Math.random() * modifierIds.length)];
+        
+        const modifierNames: Record<string, string> = {
+          fortified: 'Fortified',
+          swift: 'Swift',
+          swarm: 'Swarm',
+          resilient: 'Resilient',
+          aggressive: 'Aggressive',
+          regenerating: 'Regenerating',
+          evasive: 'Evasive',
+        };
+        
+        const modifierDescriptions: Record<string, string> = {
+          fortified: '+30% Enemy HP',
+          swift: '+25% Enemy Speed',
+          swarm: '-40% Enemy HP, -50% Spawn Time',
+          resilient: 'Enemies take 20% reduced damage',
+          aggressive: '+50% Collision Damage',
+          regenerating: 'Enemies heal 1.5 HP/second',
+          evasive: 'Enemies move erratically',
+        };
+        
+        const modifierColors: Record<string, string> = {
+          fortified: '#9370DB',
+          swift: '#00FFFF',
+          swarm: '#FF6B6B',
+          resilient: '#FFD700',
+          aggressive: '#FF0000',
+          regenerating: '#00FF00',
+          evasive: '#FF1493',
+        };
+        
+        waveModifier = {
+          id: randomId,
+          name: modifierNames[randomId],
+          description: modifierDescriptions[randomId],
+          color: modifierColors[randomId],
+          icon: ['🛡️', '⚡', '🐝', '🔒', '💥', '💚', '👻'][modifierIds.indexOf(randomId)],
+        };
+      }
+      
       // Track weapon usage for missions
       const weaponsUsed = state.missionState.weaponsUsed.includes(state.equippedWeapon)
         ? state.missionState.weaponsUsed
@@ -56,6 +105,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
           enemiesKilledThisWave: 0,
           enemiesRequiredForWave: getWaveConfig(startWave).enemiesRequired,
           totalEnemiesKilled: 0,
+          waveModifier,
           pendingRewards: {
             goldEarned: 0,
             gemsEarned: 0,
@@ -180,6 +230,54 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       const nextWave = state.battle.currentWave + 1;
       const waveConfig = getWaveConfig(state.battle.currentWave);
       
+      // Generate random wave modifier for next wave (skip boss waves)
+      const isBossWave = nextWave % 5 === 0;
+      const shouldHaveModifier = !isBossWave && Math.random() < 0.7; // 70% chance for modifier
+      
+      let waveModifier = undefined;
+      if (shouldHaveModifier) {
+        const modifierIds = ['fortified', 'swift', 'swarm', 'resilient', 'aggressive', 'regenerating', 'evasive'];
+        const randomId = modifierIds[Math.floor(Math.random() * modifierIds.length)];
+        
+        const modifierNames: Record<string, string> = {
+          fortified: 'Fortified',
+          swift: 'Swift',
+          swarm: 'Swarm',
+          resilient: 'Resilient',
+          aggressive: 'Aggressive',
+          regenerating: 'Regenerating',
+          evasive: 'Evasive',
+        };
+        
+        const modifierDescriptions: Record<string, string> = {
+          fortified: '+30% Enemy HP',
+          swift: '+25% Enemy Speed',
+          swarm: '-40% Enemy HP, -50% Spawn Time',
+          resilient: 'Enemies take 20% reduced damage',
+          aggressive: '+50% Collision Damage',
+          regenerating: 'Enemies heal 1.5 HP/second',
+          evasive: 'Enemies move erratically',
+        };
+        
+        const modifierColors: Record<string, string> = {
+          fortified: '#9370DB',
+          swift: '#00FFFF',
+          swarm: '#FF6B6B',
+          resilient: '#FFD700',
+          aggressive: '#FF0000',
+          regenerating: '#00FF00',
+          evasive: '#FF1493',
+        };
+        
+        waveModifier = {
+          id: randomId,
+          name: modifierNames[randomId],
+          description: modifierDescriptions[randomId],
+          color: modifierColors[randomId],
+          icon: ['🛡️', '⚡', '🐝', '🔒', '💥', '💚', '👻'][modifierIds.indexOf(randomId)],
+        };
+      }
+      
       // Update mission tracking - wave completed
       const newHighestWave = Math.max(state.missionState.highestWaveReached, state.battle.currentWave);
       
@@ -190,6 +288,7 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
           currentWave: nextWave,
           enemiesKilledThisWave: 0,
           enemiesRequiredForWave: getWaveConfig(nextWave).enemiesRequired,
+          waveModifier,
           pendingRewards: {
             ...state.battle.pendingRewards,
             goldEarned: state.battle.pendingRewards.goldEarned + waveConfig.waveBonus,

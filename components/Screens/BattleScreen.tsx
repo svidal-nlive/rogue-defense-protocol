@@ -132,6 +132,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   
   // Display state (from context)
   const wave = state.battle.currentWave;
+  const waveModifier = state.battle.waveModifier;
   const score = state.battle.pendingRewards.scoreEarned;
   const goldEarned = state.battle.pendingRewards.goldEarned;
   const enemiesKilledThisWave = state.battle.enemiesKilledThisWave;
@@ -580,7 +581,31 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       const delta = Math.min(rawDelta, 50) * speedMultiplierRef.current;
       const now = Date.now();
       const gState = gameStateRef.current;
-      const currentWaveConfig = getWaveConfig(wave);
+      
+      // Get wave config and apply modifier multipliers
+      let baseWaveConfig = getWaveConfig(wave);
+      let currentWaveConfig = baseWaveConfig;
+      
+      if (waveModifier) {
+        // Map modifier ID to multipliers
+        const modifierMultipliers: Record<string, any> = {
+          fortified: { enemyHp: 1.3 },
+          swift: { enemySpeed: 1.25 },
+          swarm: { enemyHp: 0.6, spawnInterval: 0.5 },
+          resilient: {}, // Damage reduction handled elsewhere
+          aggressive: {}, // Collision damage handled elsewhere
+          regenerating: {}, // Healing handled in enemy update
+          evasive: { enemySpeed: 1.1 },
+        };
+        
+        const mods = modifierMultipliers[waveModifier.id] || {};
+        currentWaveConfig = {
+          ...baseWaveConfig,
+          enemyHpMultiplier: baseWaveConfig.enemyHpMultiplier * (mods.enemyHp || 1),
+          enemySpeedMultiplier: baseWaveConfig.enemySpeedMultiplier * (mods.enemySpeed || 1),
+          spawnInterval: baseWaveConfig.spawnInterval * (mods.spawnInterval || 1),
+        };
+      }
 
       // Update dimensions
       gState.basePosition = { x: canvas.width / 2, y: canvas.height - 100 };
@@ -721,7 +746,27 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           currentSpeed = 0; // Stunned = no movement
         }
         
-        if (dist > 1 && !isStunned) {
+        // Apply evasive modifier: erratic movement (adds random direction changes)
+        if (waveModifier?.id === 'evasive' && !isStunned && dist > 1) {
+          // Initialize evasion timer if needed
+          if (!enemy.evasionTimer) {
+            enemy.evasionTimer = 0;
+            enemy.evasionAngle = 0;
+          }
+          
+          enemy.evasionTimer -= delta;
+          if (enemy.evasionTimer <= 0) {
+            // Change direction every 0.5-1.5 seconds
+            enemy.evasionAngle = Math.random() * Math.PI * 2;
+            enemy.evasionTimer = 500 + Math.random() * 1000;
+          }
+          
+          // Add evasive movement component (30% of normal movement)
+          const baseAngle = Math.atan2(dy, dx);
+          const mixedAngle = baseAngle * 0.7 + enemy.evasionAngle * 0.3;
+          enemy.x += Math.cos(mixedAngle) * currentSpeed * delta;
+          enemy.y += Math.sin(mixedAngle) * currentSpeed * delta;
+        } else if (dist > 1 && !isStunned) {
           enemy.x += (dx / dist) * currentSpeed * delta;
           enemy.y += (dy / dist) * currentSpeed * delta;
         }
@@ -730,11 +775,25 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           enemy.rotation += enemy.rotationSpeed * delta;
         }
 
+        // Apply regenerating modifier: enemies heal over time
+        if (waveModifier?.id === 'regenerating') {
+          const maxHp = (enemy.baseHp || enemy.hp) * (enemy.hpMultiplier || 1);
+          const healRate = maxHp * 0.015 * delta; // 1.5% of max HP per second
+          if (enemy.hp < maxHp) {
+            enemy.hp = Math.min(maxHp, enemy.hp + healRate);
+          }
+        }
+
         // Base collision - use centralized damage formula with defense
         if (dist < enemy.radius + 40) {
           const definition = getEnemyDefinition(enemy.type);
           const playerDefense = stats.defense || 0;
-          const damage = getCollisionDamage(definition, wave, playerDefense);
+          let damage = getCollisionDamage(definition, wave, playerDefense);
+          
+          // Apply aggressive modifier damage multiplier
+          if (waveModifier?.id === 'aggressive') {
+            damage *= 1.5; // 50% increased collision damage
+          }
           
           // Shield blocks damage
           if (!gState.shieldActive) {
@@ -796,7 +855,12 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             const effectiveCritRate = stats.critRate + boostEffects.critBonus;
             const isCrit = Math.random() * 100 < effectiveCritRate;
             const baseDmg = proj.damage || stats.damage;
-            const dmg = isCrit ? baseDmg * (stats.critDamage / 100) : baseDmg;
+            let dmg = isCrit ? baseDmg * (stats.critDamage / 100) : baseDmg;
+            
+            // Apply Resilient modifier damage reduction (20% reduction)
+            if (waveModifier?.id === 'resilient') {
+              dmg *= 0.8;
+            }
             
             // Apply damage to primary target
             enemy.hp -= dmg;
@@ -2294,6 +2358,25 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             <div className="text-[7px] sm:text-[8px] text-gray-500 font-orbitron">WAVE</div>
             <div className="text-base sm:text-lg font-bold font-orbitron">{String(wave).padStart(2, '0')}</div>
           </div>
+          
+          {/* Wave Modifier Badge */}
+          {waveModifier && (
+            <>
+              <div className="w-px h-5 sm:h-6 bg-white/10" />
+              <div className={`flex items-center gap-1.5 px-2 sm:px-3 py-1 rounded-lg border text-[8px] sm:text-[9px] font-bold`}
+                style={{ 
+                  backgroundColor: `${waveModifier.color}15`, 
+                  borderColor: `${waveModifier.color}40`,
+                  color: waveModifier.color
+                }}
+                title={waveModifier.description}
+              >
+                <span>{waveModifier.icon}</span>
+                <span className="uppercase font-orbitron">{waveModifier.name}</span>
+              </div>
+            </>
+          )}
+          
           <div className="w-px h-5 sm:h-6 bg-white/10" />
           <div className="text-center">
             <div className="text-[7px] sm:text-[8px] text-gray-500 font-orbitron">SCORE</div>

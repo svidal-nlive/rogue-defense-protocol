@@ -212,3 +212,25 @@ export const getWaveConfig = (wave: number) => ({
   waveBonus: wave * 50,                            // Flat bonus for completing wave
   isBossWave: wave % 5 === 0,                      // Boss every 5 waves
 });
+
+/**
+ * Apply wave modifier multipliers to base config
+ */
+export const getModifiedWaveConfig = (
+  wave: number,
+  modifierMultipliers?: {
+    enemyHp?: number;
+    enemySpeed?: number;
+    spawnInterval?: number;
+  }
+) => {
+  const baseConfig = getWaveConfig(wave);
+  if (!modifierMultipliers) return baseConfig;
+  
+  return {
+    ...baseConfig,
+    enemyHpMultiplier: baseConfig.enemyHpMultiplier * (modifierMultipliers.enemyHp || 1),
+    enemySpeedMultiplier: baseConfig.enemySpeedMultiplier * (modifierMultipliers.enemySpeed || 1),
+    spawnInterval: baseConfig.spawnInterval * (modifierMultipliers.spawnInterval || 1),
+  };
+};

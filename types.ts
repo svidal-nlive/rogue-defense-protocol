@@ -120,6 +120,11 @@ export interface Enemy {
   rotation?: number;
   rotationSpeed?: number;
   pulsePhase?: number;
+  // Wave modifier properties
+  baseHp?: number;            // Base HP before modifiers (for regenerating modifier)
+  hpMultiplier?: number;      // HP multiplier from wave config
+  evasionTimer?: number;      // Timer for evasive movement direction changes
+  evasionAngle?: number;      // Random angle for evasive movement
 }
 
 export interface Projectile {
@@ -288,6 +293,13 @@ export interface BattleState {
   enemiesRequiredForWave: number;
   totalEnemiesKilled: number;
   pendingRewards: BattleRewards;
+  waveModifier?: {
+    id: string;
+    name: string;
+    description: string;
+    color: string;
+    icon: string;
+  };
 }
 
 export interface GameState {
