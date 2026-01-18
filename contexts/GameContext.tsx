@@ -1285,6 +1285,49 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
       return newState;
     }
 
+    case 'TOGGLE_AUDIO': {
+      return {
+        ...state,
+        audioSettings: {
+          ...state.audioSettings,
+          enabled: action.payload.enabled
+        }
+      };
+    }
+
+    case 'SET_MASTER_VOLUME': {
+      const volume = Math.max(0, Math.min(1, action.payload.volume));
+      return {
+        ...state,
+        audioSettings: {
+          ...state.audioSettings,
+          masterVolume: volume
+        }
+      };
+    }
+
+    case 'SET_SFX_VOLUME': {
+      const volume = Math.max(0, Math.min(1, action.payload.volume));
+      return {
+        ...state,
+        audioSettings: {
+          ...state.audioSettings,
+          sfxVolume: volume
+        }
+      };
+    }
+
+    case 'SET_MUSIC_VOLUME': {
+      const volume = Math.max(0, Math.min(1, action.payload.volume));
+      return {
+        ...state,
+        audioSettings: {
+          ...state.audioSettings,
+          musicVolume: volume
+        }
+      };
+    }
+
     default:
       return state;
   }

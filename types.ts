@@ -340,6 +340,14 @@ export interface GameState {
   // Synergy tracking
   activeSynergies: string[]; // IDs of active synergies
   
+  // Audio settings
+  audioSettings: {
+    enabled: boolean;
+    masterVolume: number;
+    sfxVolume: number;
+    musicVolume: number;
+  };
+  
   // Timestamps
   lastPlayed: number;
   createdAt: number;
@@ -388,7 +396,12 @@ export type GameAction =
   | { type: 'CHECK_MISSION_UNLOCKS' }
   // Achievement actions
   | { type: 'UPDATE_ACHIEVEMENT_PROGRESS'; payload: { achievementId: string; value: number } }
-  | { type: 'UNLOCK_ACHIEVEMENT_TIER'; payload: { achievementId: string; tier: AchievementTier } };
+  | { type: 'UNLOCK_ACHIEVEMENT_TIER'; payload: { achievementId: string; tier: AchievementTier } }
+  // Audio actions
+  | { type: 'TOGGLE_AUDIO'; payload: { enabled: boolean } }
+  | { type: 'SET_MASTER_VOLUME'; payload: { volume: number } }
+  | { type: 'SET_SFX_VOLUME'; payload: { volume: number } }
+  | { type: 'SET_MUSIC_VOLUME'; payload: { volume: number } };
 
 // ============================================
 // SHOP SYSTEM TYPES (Phase 7)

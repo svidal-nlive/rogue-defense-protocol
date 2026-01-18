@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Enemy, EnemyType, Projectile, ENEMY_REWARDS, WeaponType, WEAPONS, WeaponSkin, BaseSkin } from '../../types';
 import { useGame } from '../../contexts/GameContext';
 import { getWaveConfig } from '../../utils/storage';
+import { initAudioContext, playSound, AudioType } from '../../utils/audio';
 import { 
   ENEMY_DEFINITIONS, 
   getEnemyHp, 
@@ -156,6 +157,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     waveTextTimer: 0,
     shieldActive: false,
     overclockActive: false,
+    waveStartSoundPlayed: false, // Track if we played the wave start sound
     // Visual enhancement data
     stars: [] as {x: number, y: number, size: number, brightness: number, twinkleSpeed: number, layer: number}[],
     nebulaClouds: [] as {x: number, y: number, radius: number, color: string, alpha: number}[],
@@ -195,11 +197,14 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   useEffect(() => {
     // Use ref to prevent wave advancement after game over
     if (enemiesKilledThisWave >= enemiesRequired && !gameOverRef.current) {
+      const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+      playSound(AudioType.WAVE_COMPLETE, { volume: audioVolume });
       advanceWave();
       gameStateRef.current.showWaveText = true;
       gameStateRef.current.waveTextTimer = 2000;
+      gameStateRef.current.waveStartSoundPlayed = false; // Reset for next wave
     }
-  }, [enemiesKilledThisWave, enemiesRequired, advanceWave]);
+  }, [enemiesKilledThisWave, enemiesRequired, advanceWave, state.audioSettings]);
 
   // Ability cooldown tick
   useEffect(() => {
@@ -635,6 +640,12 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       // --- SPAWNING ---
       gState.spawnTimer += delta;
       if (gState.spawnTimer > currentWaveConfig.spawnInterval) {
+        // Play wave start sound on first enemy of wave
+        if (gState.enemies.length === 0 && !gState.waveStartSoundPlayed) {
+          const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+          playSound(AudioType.WAVE_START, { volume: audioVolume });
+          gState.waveStartSoundPlayed = true;
+        }
         spawnEnemy(canvas.width, canvas.height);
         gState.spawnTimer = 0;
       }
@@ -922,6 +933,24 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             createDamageNumber(enemy.x, enemy.y, dmg, isCrit);
             createExplosion(proj.x, proj.y, proj.color, 3);
             
+            // Play sound based on weapon type and crit status
+            const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+            if (isCrit) {
+              playSound(AudioType.CRITICAL_HIT, { volume: audioVolume });
+            } else {
+              const soundMap = {
+                [WeaponType.BLASTER]: AudioType.PLASMA_BURST,
+                [WeaponType.LASER]: AudioType.LASER,
+                [WeaponType.MISSILE]: AudioType.MISSILE,
+                [WeaponType.CRYO]: AudioType.LASER
+              };
+              const soundType = soundMap[equippedWeapon] || AudioType.PLASMA_BURST;
+              playSound(soundType, { volume: audioVolume });
+            }
+            
+            // Play enemy hit sound
+            playSound(AudioType.ENEMY_HIT, { volume: audioVolume * 0.5 });
+            
             // Apply slow effect (Cryo weapon)
             if (proj.slowPercent && proj.slowDuration) {
               enemy.slowedUntil = Date.now() + proj.slowDuration;
@@ -958,6 +987,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
                   
                   if (other.hp <= 0) {
                     createExplosion(other.x, other.y, other.color, 15);
+                    const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+                    playSound(AudioType.ENEMY_DEATH, { volume: audioVolume });
                     killEnemy(other.type, false, splashDmg);
                     gState.enemies.splice(k, 1);
                     if (k < j) j--; // Adjust index
@@ -978,6 +1009,14 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             // Check if primary target is dead
             if (enemy.hp <= 0) {
               createExplosion(enemy.x, enemy.y, enemy.color, 15);
+              
+              // Play death sound based on enemy type
+              const isBoss = enemy.type === EnemyType.BOSS;
+              const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+              playSound(
+                isBoss ? AudioType.BOSS_DEATH : AudioType.ENEMY_DEATH,
+                { volume: audioVolume }
+              );
               
               // Check if this was a priority target kill (bonus reward opportunity)
               if (gState.priorityTarget) {
@@ -1037,6 +1076,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       // Use ref to prevent multiple triggers and race conditions
       if (gState.hp <= 0 && !gameOverRef.current) {
         gameOverRef.current = true; // Set ref immediately to prevent re-triggers
+        const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+        playSound(AudioType.BATTLE_DEFEAT, { volume: audioVolume });
         setGameOver(true);
         // Brief delay to show critical failure, then auto-exit to summary
         setTimeout(() => {

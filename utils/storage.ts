@@ -118,6 +118,12 @@ export const createInitialGameState = (): GameState => ({
   missionState: createInitialMissionState(), // Mission system
   achievementState: createInitialAchievementState(), // Achievement system
   activeSynergies: [],                        // No synergies active at game start
+  audioSettings: {
+    enabled: true,
+    masterVolume: 0.6,
+    sfxVolume: 0.7,
+    musicVolume: 0.5,
+  },
   lastPlayed: Date.now(),
   createdAt: Date.now(),
 });

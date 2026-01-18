@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGame } from '../../contexts/GameContext';
 import { formatNumber } from '../../utils/storage';
+import { playSound, AudioType } from '../../utils/audio';
 import { Coins, Gem, Target, Zap, Award, TrendingUp, X, Skull, Crosshair, Swords, RefreshCw, Home, Flag } from 'lucide-react';
 
 interface BattleSummaryProps {
@@ -15,6 +16,14 @@ const BattleSummary: React.FC<BattleSummaryProps> = ({ onClose, onRetry }) => {
   const [animatedGold, setAnimatedGold] = useState(0);
   const [animatedGems, setAnimatedGems] = useState(0);
   const [animatedScore, setAnimatedScore] = useState(0);
+
+  // Play victory/defeat sound when summary appears
+  useEffect(() => {
+    const isVictory = pendingRewards.wavesCompleted > 0;
+    const soundType = isVictory ? AudioType.BATTLE_VICTORY : AudioType.BATTLE_DEFEAT;
+    const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+    playSound(soundType, { volume: audioVolume });
+  }, [state.audioSettings]); // Only play once on mount
 
   // Animate numbers counting up
   useEffect(() => {
