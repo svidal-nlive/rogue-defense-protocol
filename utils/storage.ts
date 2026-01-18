@@ -117,6 +117,7 @@ export const createInitialGameState = (): GameState => ({
   shop: createInitialShopState(),             // Shop state
   missionState: createInitialMissionState(), // Mission system
   achievementState: createInitialAchievementState(), // Achievement system
+  activeSynergies: [],                        // No synergies active at game start
   lastPlayed: Date.now(),
   createdAt: Date.now(),
 });

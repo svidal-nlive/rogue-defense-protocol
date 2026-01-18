@@ -25,6 +25,7 @@ import {
   MissionTrackingStats
 } from '../constants/missions';
 import { getAchievementById, checkAchievementTierReached, ALL_ACHIEVEMENTS } from '../constants/achievements';
+import { getActiveSynergies, calculateSynergyBonuses } from '../constants/synergies';
 
 // ============================================
 // REDUCER
@@ -453,6 +454,8 @@ const gameReducer = (state: GameState, action: GameAction): GameState => {
           ...statUpdates,
         },
         skillNodes: newSkillNodes,
+        // Recalculate active synergies after skill upgrade
+        activeSynergies: getActiveSynergies(newSkillNodes).map(s => s.id),
       };
     }
 

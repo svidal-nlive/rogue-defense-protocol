@@ -337,6 +337,9 @@ export interface GameState {
   missionState: MissionState;
   achievementState: AchievementState;
   
+  // Synergy tracking
+  activeSynergies: string[]; // IDs of active synergies
+  
   // Timestamps
   lastPlayed: number;
   createdAt: number;
