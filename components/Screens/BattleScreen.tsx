@@ -106,6 +106,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   const [aimMode, setAimMode] = useState<'AUTO' | 'MANUAL'>('MANUAL');
   const [aimPosition, setAimPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [isAiming, setIsAiming] = useState(false);
+  const [isHolding, setIsHolding] = useState(false);
   const [ammo, setAmmo] = useState(30);
   const maxAmmo = 30;
   const [isReloading, setIsReloading] = useState(false);
@@ -116,6 +117,9 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   
   // Track if game state has been initialized (to prevent re-initialization on effect re-runs)
   const isInitializedRef = useRef(false);
+  
+  // Track hold-to-fire timing for continuous fire while holding
+  const holdFireTimerRef = useRef(0);
   
   // Ability state
   const [abilities, setAbilities] = useState<Ability[]>([
@@ -431,7 +435,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     setIsAiming(true);
   }, [aimMode, paused, gameOver]);
 
-  // Handle pointer down for firing
+  // Handle pointer down for holding and continuous fire
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     if (aimMode !== 'MANUAL' || paused || gameOver) return;
     
@@ -442,12 +446,25 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     const targetX = e.clientX - rect.left;
     const targetY = e.clientY - rect.top;
     
+    // Start holding - enable continuous fire
+    setIsHolding(true);
+    holdFireTimerRef.current = 0;
+    
+    // Fire immediately on click
     fireProjectileAt(targetX, targetY);
   }, [aimMode, paused, gameOver, fireProjectileAt]);
 
-  // Handle pointer leave
+  // Handle pointer up to stop holding
+  const handlePointerUp = useCallback(() => {
+    setIsHolding(false);
+    holdFireTimerRef.current = 0;
+  }, []);
+
+  // Handle pointer leave to stop aiming and holding
   const handlePointerLeave = useCallback(() => {
     setIsAiming(false);
+    setIsHolding(false);
+    holdFireTimerRef.current = 0;
   }, []);
 
   // Keyboard handler for abilities and reload
@@ -554,6 +571,16 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           const dy = aimPosition.y - gState.basePosition.y;
           if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
             gState.turretAngle = Math.atan2(dy, dx);
+          }
+        }
+        
+        // Handle hold-to-fire: continuous fire while holding at upgradeable rate
+        if (isHolding && aimPosition && !isReloading) {
+          holdFireTimerRef.current += delta;
+          if (holdFireTimerRef.current >= fireInterval) {
+            // Fire at current aim position
+            fireProjectileAt(aimPosition.x, aimPosition.y);
+            holdFireTimerRef.current = 0;
           }
         }
       } else {
@@ -1925,7 +1952,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       cancelAnimationFrame(frameId);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused, stats, wave, spawnEnemy, createExplosion, createDamageNumber, killEnemy, boostEffects, equippedWeaponSkin, equippedBaseSkin, aimMode, isAiming, aimPosition]);
+  }, [paused, stats, wave, spawnEnemy, createExplosion, createDamageNumber, killEnemy, boostEffects, equippedWeaponSkin, equippedBaseSkin, aimMode, isAiming, aimPosition, isHolding, isReloading]);
 
   // Handle tap to target enemy
   const handleCanvasTap = useCallback((tap: TapEvent) => {
@@ -2118,6 +2145,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
         }}
         onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}
+        onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerLeave}
       >
         <canvas 
@@ -2220,10 +2248,10 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             </div>
 
             {aimMode === 'MANUAL' && (
-              <div className="pt-2 border-t border-white/5">
+              <div className="pt-2 border-t border-white/5 space-y-2">
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-[9px] text-gray-500 font-orbitron">AMMO</span>
-                  <span className={`text-sm font-bold font-mono ${isReloading ? 'text-cyber-yellow animate-pulse' : 'text-white'}`}>
+                  <span className="text-[9px] text-gray-500 font-orbitron">AMMO {isHolding && '(HOLDING)'}</span>
+                  <span className={`text-sm font-bold font-mono ${isReloading ? 'text-cyber-yellow animate-pulse' : isHolding ? 'text-cyber-blue animate-pulse' : 'text-white'}`}>
                     {isReloading ? 'RELOADING' : `${ammo}/${maxAmmo}`}
                   </span>
                 </div>
@@ -2235,17 +2263,22 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
                     />
                   </div>
                 ) : (
-                  <button
-                    onClick={() => startReload()}
-                    disabled={ammo === maxAmmo}
-                    className={`w-full h-8 rounded-lg border text-xs font-orbitron transition-all ${
-                      ammo === maxAmmo
-                        ? 'bg-gray-900 border-gray-700 text-gray-600 cursor-not-allowed'
-                        : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
-                    }`}
-                  >
-                    RELOAD (R)
-                  </button>
+                  <>
+                    <div className="text-[8px] text-gray-600 font-mono">
+                      {`${(1000 / ((stats.attackSpeed || 1) * currentWeapon.attackSpeedMultiplier * ((gameStateRef.current?.overclockActive ? 2 : 1)))).toFixed(0)}ms/shot`}
+                    </div>
+                    <button
+                      onClick={() => startReload()}
+                      disabled={ammo === maxAmmo}
+                      className={`w-full h-8 rounded-lg border text-xs font-orbitron transition-all ${
+                        ammo === maxAmmo
+                          ? 'bg-gray-900 border-gray-700 text-gray-600 cursor-not-allowed'
+                          : 'bg-white/5 border-white/10 text-white hover:bg-white/10'
+                      }`}
+                    >
+                      RELOAD (R)
+                    </button>
+                  </>
                 )}
               </div>
             )}
@@ -2298,8 +2331,8 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             <div className="px-4 pb-2">
               <div className="bg-white/5 border border-white/10 rounded-lg p-2 flex items-center justify-between">
                 <div className="flex-1">
-                  <div className="text-[8px] text-gray-500 font-orbitron mb-0.5">AMMO</div>
-                  <div className={`text-sm font-bold font-mono ${isReloading ? 'text-cyber-yellow animate-pulse' : 'text-white'}`}>
+                  <div className="text-[8px] text-gray-500 font-orbitron mb-0.5">{isHolding ? 'HOLDING' : 'AMMO'}</div>
+                  <div className={`text-sm font-bold font-mono ${isReloading ? 'text-cyber-yellow animate-pulse' : isHolding ? 'text-cyber-blue animate-pulse' : 'text-white'}`}>
                     {isReloading ? 'RELOAD' : `${ammo}/${maxAmmo}`}
                   </div>
                 </div>

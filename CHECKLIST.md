@@ -126,7 +126,28 @@
 
 ---
 
+## Phase 8: Manual Aim Mode & Hold-to-Autofire ✅
+
+- [x] Manual Aim mode with crosshair targeting
+- [x] Ammo management system (30 rounds per magazine)
+- [x] Reload mechanic with delay
+- [x] Click-to-fire precision targeting
+- [x] Hold-to-autofire continuous firing
+  - [x] Fire rate upgradeable via skill tree (Rapid Fire)
+  - [x] Fire rate upgradeable via chips (attackSpeed bonuses)
+  - [x] Fire rate upgradeable via shop boosts (Rapid Fire Protocol)
+  - [x] Fire rate affected by weapon multipliers
+  - [x] Fire rate doubled by Overclock ability
+  - [x] Visual feedback (HOLDING indicator, fire rate display)
+  - [x] Mobile and desktop UI enhancements
+- [x] Crosshair positioning and movement tracking
+- [x] Integrated with battle reward system
+- [x] Documentation: [HOLD_TO_AUTOFIRE_FEATURE.md](docs/HOLD_TO_AUTOFIRE_FEATURE.md)
+
+---
+
 ## Legend
+
 - ✅ Complete
 - 🚧 In Progress
 - ⏳ Pending
@@ -137,20 +158,22 @@
 ## Notes & Decisions
 
 ### 2026-01-14
+
 - Plan approved, beginning Phase 1 implementation
 - Using Express static server (simpler than nginx for Node ecosystem)
 - Domain: rogue-defense.vectorhost.net
 
 ### Phase 1 Completion Notes
+
 - Created multi-stage Dockerfile with Node 22 slim image
 - Express server with compression, security headers, health endpoint
 - Configured Traefik labels for `rogue-defense.vectorhost.net`
 - Fixed TSX syntax issues (`>` → `&gt;`)
 - Converted from CDN Tailwind to bundled Tailwind CSS
 - Build output: ~656KB total (gzipped: ~184KB)
-- Container running and healthy on proxy network
 
 ### Phase 6 Completion Notes
+
 - Created useResponsive hook with orientation, touch, and breakpoint detection
 - Added useTapGesture and useSwipeGesture for touch interactions
 - Refactored BattleScreen with dynamic layout based on device/orientation
@@ -161,6 +184,7 @@
 - All buttons use touch-manipulation for 300ms delay removal
 
 ### Phase 7 Completion Notes
+
 - Created comprehensive shop system with three categories: Boosts, Weapon Skins, Base Skins
 - Weapon Skins (7 total): Default, Flame Thrower, Electric Storm, Frost Bite, Void Shadow, Rainbow Prism, Gold Elite
   - Each skin has unique projectile color, trail color, and trail style (flame, electric, ice, rainbow, void)
@@ -171,6 +195,21 @@
   - Duration-based boosts expire automatically; instant boosts apply immediately
 - ShopScreen with tabbed interface, rarity indicators, and smooth purchase/equip flow
 - GameContext extended with 6 new actions: PURCHASE_SKIN, EQUIP_WEAPON_SKIN, EQUIP_BASE_SKIN, PURCHASE_BOOST, ACTIVATE_BOOST, DEACTIVATE_BOOST
+
+### Phase 8 Completion Notes
+
+- Implemented Manual Aim mode with precision crosshair targeting
+- Created ammo system (30 rounds per magazine) with reload mechanic
+- Added hold-to-autofire: fire continuously while holding pointer button
+- Fire rate fully upgradeable through existing systems:
+  - Skill tree: Rapid Fire node (+5% per level)
+  - Chips: Any attackSpeed bonus chips (+5 to +25)
+  - Shop boosts: Rapid Fire Protocol (+25% for one battle)
+  - Weapon multipliers: LASER (3.0x) vs MISSILE (0.6x)
+  - Battle effects: Overclock (2.0x multiplier)
+- UI enhancements: Hold indicator, fire rate display (ms/shot), visual feedback on both desktop and mobile
+- Build verified: 0 errors, 4.74s compile time, +0.2KB bundle size
+
 - BattleScreen integrates skins: weapon skins affect projectile trails, base skins change station appearance
 - Boost effects calculated via useMemo hook, applied to damage, crit rate, and projectile speed
 - Storage version bumped to 3 with automatic migration for shop state
