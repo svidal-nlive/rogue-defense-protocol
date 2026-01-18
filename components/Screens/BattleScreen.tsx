@@ -197,7 +197,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
   useEffect(() => {
     // Use ref to prevent wave advancement after game over
     if (enemiesKilledThisWave >= enemiesRequired && !gameOverRef.current) {
-      const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+      const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
       playSound(AudioType.WAVE_COMPLETE, { volume: audioVolume });
       advanceWave();
       gameStateRef.current.showWaveText = true;
@@ -642,7 +642,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       if (gState.spawnTimer > currentWaveConfig.spawnInterval) {
         // Play wave start sound on first enemy of wave
         if (gState.enemies.length === 0 && !gState.waveStartSoundPlayed) {
-          const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+          const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
           playSound(AudioType.WAVE_START, { volume: audioVolume });
           gState.waveStartSoundPlayed = true;
         }
@@ -934,7 +934,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             createExplosion(proj.x, proj.y, proj.color, 3);
             
             // Play sound based on weapon type and crit status
-            const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+            const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
             if (isCrit) {
               playSound(AudioType.CRITICAL_HIT, { volume: audioVolume });
             } else {
@@ -987,7 +987,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
                   
                   if (other.hp <= 0) {
                     createExplosion(other.x, other.y, other.color, 15);
-                    const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+                    const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
                     playSound(AudioType.ENEMY_DEATH, { volume: audioVolume });
                     killEnemy(other.type, false, splashDmg);
                     gState.enemies.splice(k, 1);
@@ -1012,7 +1012,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
               
               // Play death sound based on enemy type
               const isBoss = enemy.type === EnemyType.BOSS;
-              const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+              const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
               playSound(
                 isBoss ? AudioType.BOSS_DEATH : AudioType.ENEMY_DEATH,
                 { volume: audioVolume }
@@ -1076,7 +1076,7 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       // Use ref to prevent multiple triggers and race conditions
       if (gState.hp <= 0 && !gameOverRef.current) {
         gameOverRef.current = true; // Set ref immediately to prevent re-triggers
-        const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+        const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
         playSound(AudioType.BATTLE_DEFEAT, { volume: audioVolume });
         setGameOver(true);
         // Brief delay to show critical failure, then auto-exit to summary

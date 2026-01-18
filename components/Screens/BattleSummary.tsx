@@ -21,7 +21,7 @@ const BattleSummary: React.FC<BattleSummaryProps> = ({ onClose, onRetry }) => {
   useEffect(() => {
     const isVictory = pendingRewards.wavesCompleted > 0;
     const soundType = isVictory ? AudioType.BATTLE_VICTORY : AudioType.BATTLE_DEFEAT;
-    const audioVolume = state.audioSettings.sfxVolume * state.audioSettings.masterVolume;
+    const audioVolume = (state.audioSettings?.sfxVolume ?? 0.7) * (state.audioSettings?.masterVolume ?? 0.6);
     playSound(soundType, { volume: audioVolume });
   }, [state.audioSettings]); // Only play once on mount
 

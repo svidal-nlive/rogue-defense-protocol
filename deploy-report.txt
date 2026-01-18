@@ -1,10 +1,10 @@
 ╔══════════════════════════════════════════════════════════════╗
 ║              DEPLOYMENT REPORT                               ║
-║              2026-01-18 04:59:38                            ║
+║              2026-01-18 12:00:44                            ║
 ╠══════════════════════════════════════════════════════════════╣
 ║ SUMMARY                                                      ║
 ╠══════════════════════════════════════════════════════════════╣
-  Total Time:        88s
+  Total Time:        75s
   Steps Passed:      16
   Steps Failed:      0
 
@@ -12,7 +12,7 @@
 ║ GIT                                                          ║
 ╠══════════════════════════════════════════════════════════════╣
   Repository:        svidal-nlive/rogue-defense-protocol
-  Commit:            6f67d6f
+  Commit:            6ee22cd
   Branch:            main
   Changes Staged:    false
   Changes Committed: true
@@ -20,15 +20,15 @@
 ╠══════════════════════════════════════════════════════════════╣
 ║ GITHUB ACTIONS                                               ║
 ╠══════════════════════════════════════════════════════════════╣
-  Workflow Run ID:   21106329002
-  Workflow Duration: 65s
-  Workflow URL:      https://github.com/svidal-nlive/rogue-defense-protocol/actions/runs/21106329002
+  Workflow Run ID:   21111346525
+  Workflow Duration: 47s
+  Workflow URL:      https://github.com/svidal-nlive/rogue-defense-protocol/actions/runs/21111346525
 
 ╠══════════════════════════════════════════════════════════════╣
 ║ DOCKER                                                       ║
 ╠══════════════════════════════════════════════════════════════╣
   Image:             ghcr.io/svidal-nlive/rogue-defense-protocol:latest
-  Image Digest:      sha256:4d402f6f012a3f1882ab8f4...
+  Image Digest:      sha256:0fc8e78a7daeeebc4bf4cbe...
   Container:         rogue-defense-protocol
   Container Status:  running
   Health Status:     healthy
