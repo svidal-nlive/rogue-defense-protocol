@@ -146,6 +146,39 @@
 
 ---
 
+## Phase 1b: Engagement Enhancements ✅
+
+- [x] Reduce ability cooldowns by 50%
+  - [x] Q (Plasma Burst): 10s → 5s
+  - [x] W (Shield): 15s → 8s
+  - [x] E (Overclock): 20s → 12s
+- [x] New ability: EMP Pulse (R key)
+  - [x] 6s cooldown
+  - [x] Stuns all enemies 2 seconds in 300px radius
+  - [x] Cyan shockwave visual effect
+  - [x] Integrated with ability system
+- [x] New ability: Repair Drone (F key)
+  - [x] 15s cooldown
+  - [x] Restores 300 HP to base
+  - [x] Green explosion visual feedback
+  - [x] Integrated with ability system
+- [x] Priority Target System
+  - [x] Random spawning (20% chance)
+  - [x] 6-second duration with countdown
+  - [x] Visual indicators (rings, diamond, timer)
+  - [x] Color coding (green active, red expiring)
+  - [x] Canvas rendering with pulsing effects
+- [x] Enemy Stun System
+  - [x] Stun state tracking (Map-based)
+  - [x] Movement prevention while stunned
+  - [x] Automatic stun clearing
+- [x] Keyboard handlers
+  - [x] R key for EMP Pulse
+  - [x] F key for Repair Drone
+- [x] Documentation: [PHASE_1B_COMPLETION_SUMMARY.md](docs/PHASE_1B_COMPLETION_SUMMARY.md)
+
+---
+
 ## Legend
 
 - ✅ Complete
