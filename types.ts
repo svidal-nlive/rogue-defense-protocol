@@ -125,6 +125,10 @@ export interface Enemy {
   hpMultiplier?: number;      // HP multiplier from wave config
   evasionTimer?: number;      // Timer for evasive movement direction changes
   evasionAngle?: number;      // Random angle for evasive movement
+  // Behavior properties
+  behavior?: string;          // Behavior type (standard/aggressive/evasive/tanky)
+  behaviorColor?: string;     // Color indicator for behavior
+  damageTakenMultiplier?: number; // Incoming damage multiplier (for tanky behavior)
 }
 
 export interface Projectile {

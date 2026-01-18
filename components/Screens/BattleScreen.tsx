@@ -10,6 +10,7 @@ import {
   selectEnemyType,
   getEnemyDefinition 
 } from '../../constants/enemies';
+import { selectEnemyBehavior, getBehaviorDefinition } from '../../constants/behaviors';
 import { useResponsive, useTapGesture, useSwipeGesture, TapEvent, SwipeGesture } from '../../hooks/useResponsive';
 import { Pause, Play, FastForward, XCircle, Shield, Zap, Target, RefreshCw, Coins, Flame, ChevronUp, Radio } from 'lucide-react';
 import { WEAPON_SKINS, BASE_SKINS, BOOST_ITEMS } from '../../constants/shopItems';
@@ -260,9 +261,18 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
     const type = selectEnemyType(wave, waveConfig.isBossWave, currentBossCount);
     const definition = getEnemyDefinition(type);
     
+    // Select behavior based on wave and modifier
+    const modifierId = waveModifier?.id;
+    const behaviorType = selectEnemyBehavior(wave, modifierId);
+    const behaviorDef = getBehaviorDefinition(behaviorType);
+    
     // Calculate scaled stats using centralized formulas
-    const enemyHp = getEnemyHp(definition, wave);
-    const speed = getEnemySpeed(definition, wave);
+    let enemyHp = getEnemyHp(definition, wave);
+    let speed = getEnemySpeed(definition, wave);
+    
+    // Apply behavior multipliers
+    enemyHp *= behaviorDef.hpMultiplier;
+    speed *= behaviorDef.speedMultiplier;
 
     const enemy: Enemy = {
       id: Math.random().toString(36).substr(2, 9),
@@ -280,10 +290,14 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
       pulsePhase: Math.random() * Math.PI * 2,
       slowedUntil: 0,
       slowPercent: 0,
+      // Behavior system
+      behavior: behaviorType,
+      behaviorColor: behaviorDef.color,
+      damageTakenMultiplier: behaviorDef.hasDamageReduction ? 0.85 : 1.0,
     };
 
     gameStateRef.current.enemies.push(enemy);
-  }, [wave]);
+  }, [wave, waveModifier]);
 
   // Create explosion particles
   const createExplosion = useCallback((x: number, y: number, color: string, count: number = 8) => {
@@ -766,7 +780,29 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           const mixedAngle = baseAngle * 0.7 + enemy.evasionAngle * 0.3;
           enemy.x += Math.cos(mixedAngle) * currentSpeed * delta;
           enemy.y += Math.sin(mixedAngle) * currentSpeed * delta;
-        } else if (dist > 1 && !isStunned) {
+        } 
+        // Apply evasive behavior: erratic movement with frequent direction changes
+        else if (enemy.behavior === 'evasive' && !isStunned && dist > 1) {
+          // Initialize evasion timer if needed
+          if (!enemy.evasionTimer) {
+            enemy.evasionTimer = 0;
+            enemy.evasionAngle = 0;
+          }
+          
+          enemy.evasionTimer -= delta;
+          if (enemy.evasionTimer <= 0) {
+            // Change direction every 0.3-0.8 seconds (faster than modifier)
+            enemy.evasionAngle = Math.random() * Math.PI * 2;
+            enemy.evasionTimer = 300 + Math.random() * 500;
+          }
+          
+          // More erratic: 50% random movement vs 50% approach
+          const baseAngle = Math.atan2(dy, dx);
+          const mixedAngle = baseAngle * 0.5 + enemy.evasionAngle * 0.5;
+          enemy.x += Math.cos(mixedAngle) * currentSpeed * delta;
+          enemy.y += Math.sin(mixedAngle) * currentSpeed * delta;
+        }
+        else if (dist > 1 && !isStunned) {
           enemy.x += (dx / dist) * currentSpeed * delta;
           enemy.y += (dy / dist) * currentSpeed * delta;
         }
@@ -783,6 +819,15 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             enemy.hp = Math.min(maxHp, enemy.hp + healRate);
           }
         }
+        
+        // Apply tanky behavior: regeneration for tanky enemies
+        if (enemy.behavior === 'tanky') {
+          const maxHp = enemy.maxHp;
+          const healRate = maxHp * 0.010 * delta; // 1.0% of max HP per second (slower than modifier)
+          if (enemy.hp < maxHp) {
+            enemy.hp = Math.min(maxHp, enemy.hp + healRate);
+          }
+        }
 
         // Base collision - use centralized damage formula with defense
         if (dist < enemy.radius + 40) {
@@ -793,6 +838,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
           // Apply aggressive modifier damage multiplier
           if (waveModifier?.id === 'aggressive') {
             damage *= 1.5; // 50% increased collision damage
+          }
+          
+          // Apply aggressive behavior damage multiplier
+          if (enemy.behavior === 'aggressive') {
+            damage *= 1.3; // 30% increased collision damage for aggressive behavior
           }
           
           // Shield blocks damage
@@ -860,6 +910,11 @@ const BattleScreen: React.FC<BattleScreenProps> = ({ onExit }) => {
             // Apply Resilient modifier damage reduction (20% reduction)
             if (waveModifier?.id === 'resilient') {
               dmg *= 0.8;
+            }
+            
+            // Apply tanky behavior damage reduction (15% reduction for tanky enemies)
+            if (enemy.damageTakenMultiplier && enemy.damageTakenMultiplier < 1) {
+              dmg *= enemy.damageTakenMultiplier;
             }
             
             // Apply damage to primary target
